@@ -1,0 +1,63 @@
+module Helpers exposing (..)
+
+-- import Date exposing (Date)
+-- import Date.Extra (Time.Extra)
+-- import Date
+-- import Time.Extra exposing (Month(..), utc)
+
+import Date
+import Time
+import Time.Extra
+import List.Extra
+
+
+hourString : Time.Extra.Parts -> String
+hourString date =
+    Date.toIsoString "h:mm a" date
+
+
+bumpMidnightBoundary : Time.Extra.Parts -> Time.Extra.Parts
+bumpMidnightBoundary date =
+    if Date.ordinalDay date == 0 then
+        Date.add Time.Extra.Millisecond 1 date
+    else
+        date
+
+
+hours :Time.Extra.Parts -> List Time.Extra.Parts
+hours date =
+    let
+        day =
+            bumpMidnightBoundary date
+
+        midnight =
+           Time.Extra.floor Date.Day day
+
+        lastHour =
+            Time.Extra.ceiling Date.Day day
+    in
+        Time.Extra.range Time.Extra.Hour 1 midnight lastHour
+
+
+weekRangesFromMonth : Int ->Date.Month -> List (List Time.Extra.Parts)
+weekRangesFromMonth year month =
+    let
+        firstOfMonth =
+            Date.fromCalendarDate year month 1
+
+        firstOfNextMonth =
+            Time.Extra.add  Time.Extra.Month 1 Time.utc firstOfMonth
+    in
+        Time.Extra.range Time.Extra.Day
+            1
+            (Time.Extra.floor Time.Extra.Sunday firstOfMonth)
+            (Time.Extra.ceiling Time.Extra.Sunday firstOfNextMonth)
+            |> List.Extra.groupsOf 7
+
+
+dayRangeOfWeek : Time.Extra.Parts -> List Time.Extra.Parts
+dayRangeOfWeek date =
+    Time.Extra.range Time.Extra.Day
+        1
+        (Time.Extra.floor Time.Extra.Sunday date)
+        (Time.Extra.ceiling Time.Extra.Sunday date)
