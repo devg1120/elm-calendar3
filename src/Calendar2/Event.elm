@@ -72,9 +72,6 @@ rangeDescription start end interval posix =
         parts =  Time.Extra.posixToParts Time.utc posix 
         start_parts =  Time.Extra.posixToParts Time.utc  start
         end_parts =  Time.Extra.posixToParts Time.utc  end
-        --_  = Debug.log "rangeDescription:" parts 
-        --_  = Debug.log "           start:" start_parts 
-        --_  = Debug.log "             end:" end_parts 
         in
     let
 
@@ -84,20 +81,6 @@ rangeDescription start end interval posix =
         endInterval =
             -- Time.Extra.ceiling interval Time.utc posix
             Time.Extra.add interval 1 Time.utc posix
-
-        -- b_parts =  Time.Extra.posixToParts Time.utc  begInterval
-        -- e_parts =  Time.Extra.posixToParts Time.utc  endInterval
-        -- _  = Debug.log "             begInterval:"  b_parts
-        -- _  = Debug.log "             endInterval:"  e_parts
-
-        --
-        --
-        --
-        --
-        -- dt_start = DateTime.fromPosix start
-        -- dt_end   = DateTime.fromPosix end
-        -- dt_begInterval   = DateTime.fromPosix begInterval
-        -- dt_endInterval   = DateTime.fromPosix endInterval
 
         startsThisInterval   = isBetween begInterval endInterval start
         endsThisInterval     = isBetween begInterval endInterval end

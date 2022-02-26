@@ -140,7 +140,7 @@ hoursInADay =
 -}
 
 eventOne =
-    { id = "1", title = "GUSA1/ Friends", start = Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 9 3 0 0 0), end = Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 9 5 0 0 0) }
+    { id = "1", title = "GUSA 1/ Friends", start = Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 9 3 0 0 0), end = Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 9 5 0 0 0) }
 
 
 eventTwo =
@@ -152,12 +152,14 @@ eventThree =
 
 
 eventFour =
-    { id = "4", title = "GUSA4/ Friends", start = Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 9 4 0 0 0), end = Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 9 7 0 0 0) }
+    { id = "4", title = "GUSA4/ Friends", start = Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 10 4 0 0 0), end = Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 10 7 0 0 0) }
 
 eventFive =
     { id = "5", title = "GUSA5/ Friends", start = Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 11 4 0 0 0), end = Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 11 7 0 0 0) }
 
 
+eventGroups = []
+{--
 eventGroups =
     [ { date = Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 9 15 0 0 0)
       , events = [ eventOne ]
@@ -169,7 +171,7 @@ eventGroups =
       , events = [ eventFour ]
       }
     ]
-
+    --}
 
 events =
     [ eventOne

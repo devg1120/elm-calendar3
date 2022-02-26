@@ -194,17 +194,41 @@ updateCalendar msg model_ =
             { model_ | eventExtendAmount = (Time.millisToPosix timeDiff) }
 
         EventMove eventId posix ->  --GUSA
-            --    Debug.log ("***move event: " ++ eventId)  --GUSA
+        {--
+            Debug.log ("***move event: " ++ eventId)  --GUSA
             model_
-            {--  GUSA
+            --}
             let
                 maybeEvent =
                     Dict.get eventId model_.events
+                    {--
+                newEnd old_start old_end =
+                    Time.posixToMillis old_end
+                        |> (-) Time.posixToMillis old_start
+                        |> (+) Time.posixToMillis posix
+                        |> Time.millisToPosix
+                        --}
+                newEnd old_start old_end =
+                        let
+                              e = Time.posixToMillis old_end
+                              s = Time.posixToMillis old_start
+                              d = (-) s e
+                              n = Time.posixToMillis posix
+                              a = (+) n d 
+                        in
+                        Time.millisToPosix a
+                --newEvent event =
+                --        |> { event | end = newEnd event.start event.end }
+                --        |> { event | start = posix }
+
                 newEvent event =
-                    { event | start = posix }
+                        { event | end = newEnd event.start event.end, start = posix}
+
 
                 updateEvents event =
-                    Dict.update eventId (Maybe.map (\name -> newEvent)) model_.events
+                    --Dict.update eventId (Maybe.map (\name -> newEvent)) model_.events
+                    --Dict.update eventId (newEvent event) model_.events
+                    Dict.update eventId (Maybe.map (\event_ -> newEvent event_)) model_.events
 
             in
                 case maybeEvent of
@@ -213,7 +237,6 @@ updateCalendar msg model_ =
 
                     Just event ->
                         { model_ | events = updateEvents event }
-                --}
 
         ExtendEvent eventId timeDiff ->
             let
