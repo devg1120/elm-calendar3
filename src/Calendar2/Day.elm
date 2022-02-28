@@ -15,7 +15,8 @@ import Calendar2.Msg exposing (Msg(..))
 --import Mouse
 -- import Html.Events.Extra.Mouse as Mouse 
 import Html.Events.Extra.Mouse 
-import Calendar2.Event as Event exposing (rangeDescription)
+--import Calendar2.Event as Event exposing (rangeDescription)
+import Calendar2.Event as Event exposing (rangeDescriptionFromDay)
 import Html5.DragDrop as DragDrop
 
 
@@ -151,7 +152,9 @@ viewDayEvent config day selectedId event =
               -- Date.fromPosix Time.utc (config.end event)
               config.end event
         eventRange  =
-            rangeDescription eventStart eventEnd Time.Extra.Day day
+            --rangeDescription eventStart eventEnd Time.Extra.Day day
+            rangeDescriptionFromDay eventStart eventEnd Time.Extra.Day day
+
     in
         Event.maybeViewDayEvent config event selectedId eventRange
 

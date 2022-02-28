@@ -38,9 +38,9 @@ weekAfter =
 
 -}
 
---viewing : Time.Posix
---viewing =
---    Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 9 16 0 0 0) -- use MONTH WEEK DAY
+viewing : Time.Posix
+viewing =
+    Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 9 16 0 0 0) -- use MONTH WEEK DAY
 
 
 {-
@@ -138,7 +138,7 @@ hoursInADay =
     ]
 
 -}
-{--
+
 eventOne =
     { id = "1", title = "GUSA 1/ Friends", start = Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 9 3 0 0 0), end = Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 9 5 0 0 0) }
 
@@ -156,10 +156,9 @@ eventFour =
 
 eventFive =
     { id = "5", title = "GUSA5/ Friends", start = Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 11 4 0 0 0), end = Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 11 7 0 0 0) }
-    --}
-    {--
+
+
 eventGroups = []
---}
 {--
 eventGroups =
     [ { date = Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 9 15 0 0 0)
@@ -173,7 +172,7 @@ eventGroups =
       }
     ]
     --}
-    {--
+
 events =
     [ eventOne
     , eventTwo
@@ -181,81 +180,4 @@ events =
     , eventFour
     , eventFive
     ]
-    --}
 
---e01 =  { id = "1", title = "1", start = Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 1 3 0 0 0), end = Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 1 5 0 0 0) }
-
---e02 =  { id = "1", title = "1", start = Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 1 3 0 0 0), end = Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 1 5 0 0 0) }
-
-type alias Event =
-               {
-                id    : String
-               ,title : String
-               ,start : Time.Posix
-               ,end   : Time.Posix
-                }
-
-
-evt : Int -> String -> Int -> Int -> Int -> Int -> Int -> Int -> Int -> Event
-evt id title yyyy mm dd shh smm ehh emm =
-    let
-       id_ = String.fromInt id
-       start_ = Time.Extra.partsToPosix Time.utc 
-               (Time.Extra.Parts  yyyy 
-               (Date.numberToMonth mm) dd shh smm 0 0)
-       end_   = Time.Extra.partsToPosix Time.utc 
-               (Time.Extra.Parts  yyyy 
-               (Date.numberToMonth mm) dd ehh emm 0 0)
-    in
-    Event id_ title start_ end_
-
-
-
-viewing : Time.Posix
-viewing =
-    Time.Extra.partsToPosix Time.utc (Time.Extra.Parts  2020 Time.Oct 1 16 0 0 0) -- use MONTH WEEK DAY
-e01 = evt  1 "id 1"  2020 10  1 3 0 5 0
-e02 = evt  2 "id 2"  2020 10  2 3 0 5 0
-e03 = evt  3 "id 3"  2020 10  3 3 0 5 0
-e04 = evt  4 "id 4"  2020 10  4 3 0 5 0
-e05 = evt  5 "id 5"  2020 10  5 3 0 5 0
-e06 = evt  6 "id 6"  2020 10  6 3 0 5 0
-e07 = evt  7 "id 7"  2020 10  7 3 0 5 0
-
-e08 = evt  8 "id 8"  2020 10  8 3 0 5 0
-e09 = evt  9 "id 9"  2020 10  9 3 0 5 0
-e10 = evt 10 "id 10" 2020 10 10 3 0 5 0
-e11 = evt 11 "id 11" 2020 10 11 3 0 5 0
-e12 = evt 12 "id 12" 2020 10 12 3 0 5 0
-e13 = evt 13 "id 13" 2020 10 13 3 0 5 0
-e14 = evt 14 "id 14" 2020 10 14 3 0 5 0
-
-e15 = evt 15 "id 15" 2020 10 15 3 0 5 0
-e16 = evt 16 "id 16" 2020 10 16 3 0 5 0
-e17 = evt 17 "id 17" 2020 10 17 3 0 5 0
-e18 = evt 18 "id 18" 2020 10 18 3 0 5 0
-e19 = evt 19 "id 19" 2020 10 19 3 0 5 0
-e20 = evt 20 "id 20" 2020 10 20 3 0 5 0
-e21 = evt 21 "id 21" 2020 10 21 3 0 5 0
-
-e22 = evt 22 "id 22" 2020 10 22 3 0 5 0
-e23 = evt 23 "id 23" 2020 10 23 3 0 5 0
-e24 = evt 24 "id 24" 2020 10 24 3 0 5 0
-e25 = evt 25 "id 25" 2020 10 25 3 0 5 0
-e26 = evt 26 "id 26" 2020 10 26 3 0 5 0
-e27 = evt 27 "id 27" 2020 10 27 3 0 5 0
-e28 = evt 28 "id 28" 2020 10 28 3 0 5 0
-
-e29 = evt 29 "id 29" 2020 10 29 3 0 5 0
-e30 = evt 30 "id 30" 2020 10 30 3 0 5 0
-e31 = evt 31 "id 31" 2020 10 31 3 0 5 0
-
-events =
-    [ e01 , e02 , e03 , e04 , e05 , e06 , e07
-    , e08 , e09 , e10 , e11 , e12 , e13 , e14
-    , e15 , e16 , e17 , e18 , e19 , e20 , e21
-    , e22 , e23 , e24 , e25 , e26 , e27 , e28
-    , e29 , e30 , e31 
-    ]
-
-eventGroups = []

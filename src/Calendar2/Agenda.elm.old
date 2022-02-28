@@ -99,27 +99,13 @@ viewAgendaHeader =
             ]
         ]
 
-toJapaneseWeekday : Maybe Int -> String
-toJapaneseWeekday n =
-  case n of
-    Just 1 -> "月"
-    Just 2 -> "火"
-    Just 3 -> "水"
-    Just 4 -> "木"
-    Just 5 -> "金"
-    Just 6 -> "土"
-    _ -> "日"
 
 viewAgendaRowWithDate : ViewConfig event -> EventGroup event -> event -> Html msg
 viewAgendaRowWithDate config eventGroup event =
     let
         dateString =
             -- Date.Extra.toFormattedString "EE MM d" eventGroup.date
-            (Date.format " MM / dd " eventGroup.date)
-            ++ "   (" ++ ((Date.format "e" eventGroup.date) 
-                  |> String.toInt
-                  |> toJapaneseWeekday
-            ) ++ ")"
+            Date.format "EE MM d" eventGroup.date
 
         timeCell =
             td [ class "elm-calendar--agenda-date-cell", rowspan (List.length eventGroup.events) ] [ text <| dateString ]

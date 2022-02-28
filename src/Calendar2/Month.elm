@@ -15,7 +15,7 @@ import Config exposing (ViewConfig)
 import Helpers
 --import Calendar2.Msg exposing (Msg)
 import Calendar2.Msg exposing (Msg(..))
-import Calendar2.Event as Event exposing (rangeDescription)
+import Calendar2.Event as Event exposing (rangeDescriptionFromMonth)
 import String
 import Html5.DragDrop as DragDrop
 
@@ -124,7 +124,7 @@ viewMonthRowContent config events selectedId week =
 
         eventRows =
             List.filterMap (viewWeekEvent config week selectedId) events
-                |> List.take 3
+                |> List.take 7
     in
         div [ class "elm-calendar--month-week" ]
             (datesRow :: eventRows)
@@ -142,7 +142,9 @@ viewWeekEvent config week selectedId event =
            config.end event
         eventRange sunday =
             -- rangeDescription eventStart eventEnd Date.Sunday sunday
-            rangeDescription eventStart eventEnd Time.Extra.Sunday sunday
+            --rangeDescription eventStart eventEnd Time.Extra.Sunday sunday
+            rangeDescriptionFromMonth eventStart eventEnd Time.Extra.Sunday sunday
+
     in
         Maybe.map eventRange (List.head week)
             |> Maybe.andThen (Event.maybeViewMonthEvent config event selectedId)

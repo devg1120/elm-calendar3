@@ -5,7 +5,7 @@ import Html.Attributes exposing (..)
 -- import Date exposing (Date)
 import Date
 import Time
-
+import Time.Extra
 import Calendar2.Day exposing (viewTimeGutter, viewTimeGutterHeader, viewDate, viewDaySlotGroup, viewAllDayCell, viewDayEvents)
 import Calendar2.Msg exposing (Msg)
 import Config exposing (ViewConfig)
@@ -20,6 +20,7 @@ viewWeekContent :
     -> List Time.Posix
     -> Html Msg
 viewWeekContent config events selectedId viewing days =
+    let _ = Debug.log "OK" in
     let
         timeGutter =
             viewTimeGutter viewing
@@ -48,8 +49,10 @@ viewWeekDay config events selectedId posix =
 view : ViewConfig event -> List event -> Maybe String -> Time.Posix -> Html Msg
 view config events selectedId viewing =
     let
+        --v2 = Time.Extra.add Time.Extra.Sunday 1 Time.utc viewing
         weekRange =
             Helpers.dayRangeOfWeek viewing
+            --Helpers.dayRangeOfWeek v2
     in
         div [ class "elm-calendar--week" ]
             [ viewWeekHeader weekRange

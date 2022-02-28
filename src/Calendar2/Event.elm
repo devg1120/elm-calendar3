@@ -27,7 +27,7 @@ type EventRange
     | ContinuesAfterAndPrior
     | ExistsOutside
 
-
+{--
 isBetween : Time.Posix -> Time.Posix -> Time.Posix -> Bool
 isBetween begin end target =
     let
@@ -42,7 +42,22 @@ isBetween begin end target =
              False
       else
        False
-
+       --}    
+isBetween : Time.Posix -> Time.Posix -> Time.Posix -> Bool
+isBetween begin end target =
+    let
+       begin_ = Time.posixToMillis begin
+       end_   = Time.posixToMillis end
+       target_ = Time.posixToMillis target
+    in
+      if begin_ <= target_  then
+           if target_ <= end_  then
+             True
+          else
+             False
+      else
+       False
+       
 isBefore : Time.Posix -> Time.Posix -> Bool
 isBefore begin  target =
     let
@@ -65,22 +80,83 @@ isAfter end  target =
       else
        False
 
-rangeDescription : Time.Posix -> Time.Posix -> Time.Extra.Interval -> Time.Posix -> EventRange
-rangeDescription start end interval posix =
-    -- let _  = Debug.log "rangeDescription:" posix in
-    let 
-        parts =  Time.Extra.posixToParts Time.utc posix 
-        start_parts =  Time.Extra.posixToParts Time.utc  start
-        end_parts =  Time.Extra.posixToParts Time.utc  end
-        in
+toIntMonth : Time.Month -> Int
+toIntMonth month =
+  case month of
+    Time.Jan -> 1
+    Time.Feb -> 2
+    Time.Mar -> 3
+    Time.Apr -> 4
+    Time.May -> 5
+    Time.Jun -> 6
+    Time.Jul -> 7
+    Time.Aug -> 8
+    Time.Sep -> 9
+    Time.Oct -> 10
+    Time.Nov -> 11
+    Time.Dec -> 12
+
+posixToString : Time.Posix -> String
+posixToString posix =
+    let
+      m  = String.fromInt ((Time.toMonth  Time.utc   posix) |> toIntMonth )
+      d  = String.fromInt (Time.toDay    Time.utc   posix)
+      h  = String.fromInt (Time.toHour   Time.utc   posix)
+      f  = String.fromInt (Time.toMinute Time.utc   posix)
+    in
+       m ++ "/" ++ d ++ " " ++ h ++ ":" ++ f
+
+
+rangeDescriptionFromMonth : Time.Posix -> Time.Posix -> Time.Extra.Interval -> Time.Posix -> EventRange
+rangeDescriptionFromMonth start end interval posix =
     let
 
-        begInterval =
-            Time.Extra.floor interval Time.utc posix
+        --begInterval =  
+        --    Time.Extra.floor interval Time.utc posix
 
-        endInterval =
-            -- Time.Extra.ceiling interval Time.utc posix
-            Time.Extra.add interval 1 Time.utc posix
+        --endInterval = 
+        --   Time.Extra.add interval 1 Time.utc posix
+
+        --begInterval =  
+        --    Time.Extra.floor Time.Extra.Sunday Time.utc posix
+        --        |> Time.Extra.add Time.Extra.Day  1 Time.utc 
+
+        begInterval =  
+            Time.Extra.floor Time.Extra.Sunday Time.utc posix
+            --Time.Extra.add Time.Extra.Sunday -1 Time.utc posix
+            --    |> Time.Extra.ceiling Time.Extra.Sunday  Time.utc 
+            --    |> Time.Extra.add Time.Extra.Millisecond 1  Time.utc 
+
+        endInterval = 
+           Time.Extra.add Time.Extra.Sunday 1 Time.utc posix
+                |> Time.Extra.floor Time.Extra.Sunday Time.utc 
+
+        startsThisInterval   = isBetween begInterval endInterval start
+        endsThisInterval     = isBetween begInterval endInterval end
+        startsBeforeInterval = isBefore  begInterval start
+        endsAfterInterval    = isAfter   endInterval end 
+    in
+        if startsThisInterval && endsThisInterval then
+            StartsAndEnds
+        else if startsBeforeInterval && endsAfterInterval then
+            ContinuesAfterAndPrior
+        else if startsThisInterval && endsAfterInterval then
+            ContinuesAfter
+        else if endsThisInterval && startsBeforeInterval then
+            ContinuesPrior
+        else
+            ExistsOutside
+
+rangeDescriptionFromDay : Time.Posix -> Time.Posix -> Time.Extra.Interval -> Time.Posix -> EventRange
+rangeDescriptionFromDay start end interval posix =
+    let
+
+        begInterval =  
+            Time.Extra.floor Time.Extra.Day Time.utc posix
+
+        endInterval = 
+           Time.Extra.add Time.Extra.Day 1 Time.utc posix
+                |> Time.Extra.floor Time.Extra.Day Time.utc 
 
         startsThisInterval   = isBetween begInterval endInterval start
         endsThisInterval     = isBetween begInterval endInterval end
@@ -160,26 +236,41 @@ maybeViewMonthEvent config event selectedId eventRange =
         _ ->
             Just <| viewMonthEvent config event selectedId eventRange
 
+weekdayNumber : Time.Posix -> Int
+weekdayNumber posix =
+  case (Time.toWeekday Time.utc posix) of
+    Time.Mon -> 1
+    Time.Tue -> 2
+    Time.Wed -> 3
+    Time.Thu -> 4
+    Time.Fri -> 5
+    Time.Sat -> 6
+    Time.Sun -> 0
 
 viewMonthEvent : ViewConfig event -> event -> Maybe String -> EventRange -> Html Msg
 viewMonthEvent config event selectedId eventRange =
     let
         eventStart =
             Date.fromPosix Time.utc (config.start event)
+            --config.start event
 
         eventEnd =
             Date.fromPosix Time.utc (config.end event)
+            --config.end event
 
         numDaysThisWeek =
             case eventRange of
                 StartsAndEnds ->
                     Date.diff Date.Days eventStart eventEnd + 1
+                    --Time.Extra.diff Time.Extra.Day Time.utc eventStart eventEnd + 1
 
                 ContinuesAfter ->
                     7 - (Date.weekdayNumber eventStart) + 1
+                    --7 - (weekdayNumber eventStart) + 1
 
                 ContinuesPrior ->
                     7 - (Date.weekdayNumber eventEnd) + 1
+                    --7 - (weekdayNumber eventEnd) + 1
 
                 ContinuesAfterAndPrior ->
                     7
