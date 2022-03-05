@@ -42,7 +42,8 @@ isBetween begin end target =
              False
       else
        False
-       --}    
+       --}   
+       
 isBetween : Time.Posix -> Time.Posix -> Time.Posix -> Bool
 isBetween begin end target =
     let
@@ -57,7 +58,7 @@ isBetween begin end target =
              False
       else
        False
-       
+      
 isBefore : Time.Posix -> Time.Posix -> Bool
 isBefore begin  target =
     let
@@ -106,7 +107,49 @@ posixToString posix =
     in
        m ++ "/" ++ d ++ " " ++ h ++ ":" ++ f
 
+rangeDescriptionFromMonth : Time.Posix -> Time.Posix -> Time.Extra.Interval -> Time.Posix -> EventRange
+rangeDescriptionFromMonth start end interval posix =
 
+    let
+
+{--
+        begInterval =  
+            Time.Extra.floor Time.Extra.Sunday Time.utc posix
+               |> Time.Extra.add Time.Extra.Day  1 Time.utc 
+
+        endInterval = 
+           Time.Extra.add Time.Extra.Sunday 1 Time.utc posix
+                |> Time.Extra.floor Time.Extra.Sunday Time.utc 
+                |> Time.Extra.add Time.Extra.Millisecond -1  Time.utc 
+                --}             
+                
+        begInterval =  
+            Time.Extra.floor Time.Extra.Sunday Time.utc posix
+              -- |> Time.Extra.add Time.Extra.Day  1 Time.utc 
+              -- |> Time.Extra.add Time.Extra.Day  -1 Time.utc 
+
+        endInterval = 
+            Time.Extra.add Time.Extra.Sunday 1 Time.utc posix
+                |> Time.Extra.floor Time.Extra.Sunday Time.utc 
+                |> Time.Extra.add Time.Extra.Millisecond -1  Time.utc 
+               
+        startsThisInterval   = isBetween begInterval endInterval start
+        endsThisInterval     = isBetween begInterval endInterval end
+        startsBeforeInterval = isBefore  begInterval start
+        endsAfterInterval    = isAfter   endInterval end 
+    in
+        if startsThisInterval && endsThisInterval then
+            StartsAndEnds
+        else if startsBeforeInterval && endsAfterInterval then
+            ContinuesAfterAndPrior
+        else if startsThisInterval && endsAfterInterval then
+            ContinuesAfter
+        else if endsThisInterval && startsBeforeInterval then
+            ContinuesPrior
+        else
+            ExistsOutside
+
+{--
 rangeDescriptionFromMonth : Time.Posix -> Time.Posix -> Time.Extra.Interval -> Time.Posix -> EventRange
 rangeDescriptionFromMonth start end interval posix =
     let
@@ -117,19 +160,21 @@ rangeDescriptionFromMonth start end interval posix =
         --endInterval = 
         --   Time.Extra.add interval 1 Time.utc posix
 
-        --begInterval =  
-        --    Time.Extra.floor Time.Extra.Sunday Time.utc posix
-        --        |> Time.Extra.add Time.Extra.Day  1 Time.utc 
-
         begInterval =  
             Time.Extra.floor Time.Extra.Sunday Time.utc posix
+            --    |> Time.Extra.add Time.Extra.Day  1 Time.utc 
+
+        --begInterval =  
+        --    Time.Extra.floor Time.Extra.Sunday Time.utc posix
             --Time.Extra.add Time.Extra.Sunday -1 Time.utc posix
             --    |> Time.Extra.ceiling Time.Extra.Sunday  Time.utc 
             --    |> Time.Extra.add Time.Extra.Millisecond 1  Time.utc 
 
         endInterval = 
-           Time.Extra.add Time.Extra.Sunday 1 Time.utc posix
-                |> Time.Extra.floor Time.Extra.Sunday Time.utc 
+           Time.Extra.ceiling Time.Extra.Sunday  Time.utc 
+           --Time.Extra.add Time.Extra.Sunday 1 Time.utc posix
+        --        |> Time.Extra.floor Time.Extra.Sunday Time.utc 
+        --        |> Time.Extra.add Time.Extra.Millisecond -1  Time.utc 
 
         startsThisInterval   = isBetween begInterval endInterval start
         endsThisInterval     = isBetween begInterval endInterval end
@@ -146,6 +191,7 @@ rangeDescriptionFromMonth start end interval posix =
             ContinuesPrior
         else
             ExistsOutside
+--}
 
 rangeDescriptionFromDay : Time.Posix -> Time.Posix -> Time.Extra.Interval -> Time.Posix -> EventRange
 rangeDescriptionFromDay start end interval posix =
@@ -441,13 +487,28 @@ cellWidth : Float
 cellWidth =
     100.0 / 7
 
-
+                {--
 offsetLength : Date.Date -> Float
 offsetLength date =
     (Date.weekdayNumber date)
         |> toFloat
         |> (*) cellWidth
+        --}
 
+offsetLength : Date.Date -> Float
+offsetLength date =
+    let
+      w = Date.weekdayNumber date
+      --    |> toFloat
+      parsent = case w of
+              7 ->
+                      0
+              _ ->
+                      w
+    in
+    parsent
+        |> toFloat
+        |> (*) cellWidth
 
 offsetPercentage : Date.Date -> String
 offsetPercentage date =

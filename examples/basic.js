@@ -4543,9 +4543,11 @@ var author$project$Calendar2$toInternalTimespan = function (timeSpan) {
 	}
 };
 var elm$core$Maybe$Nothing = {$: 'Nothing'};
+var norpan$elm_html5_drag_drop$Html5$DragDrop$NotDragging = {$: 'NotDragging'};
+var norpan$elm_html5_drag_drop$Html5$DragDrop$init = norpan$elm_html5_drag_drop$Html5$DragDrop$NotDragging;
 var author$project$Calendar2$Internal$init = F2(
 	function (timeSpan, viewing) {
-		return {dragState: elm$core$Maybe$Nothing, selected: elm$core$Maybe$Nothing, timeSpan: timeSpan, viewing: viewing};
+		return {dragDrop: norpan$elm_html5_drag_drop$Html5$DragDrop$init, dragState: elm$core$Maybe$Nothing, selected: elm$core$Maybe$Nothing, timeSpan: timeSpan, viewing: viewing};
 	});
 var elm$core$Basics$apL = F2(
 	function (f, x) {
@@ -4987,7 +4989,7 @@ var justinmimbs$time_extra$Time$Extra$partsToPosix = F2(
 var author$project$Fixtures$viewing = A2(
 	justinmimbs$time_extra$Time$Extra$partsToPosix,
 	elm$time$Time$utc,
-	A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 9, 16, 0, 0, 0));
+	A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 1, 16, 0, 0, 0));
 var author$project$Main$model = {
 	calendarState: A2(author$project$Calendar2$init, author$project$Calendar2$Month, author$project$Fixtures$viewing)
 };
@@ -5694,6 +5696,44 @@ var author$project$Calendar2$Internal$page = F2(
 					});
 		}
 	});
+var author$project$Calendar2$Internal$toDanishMonth = function (month) {
+	switch (month.$) {
+		case 'Jan':
+			return '1';
+		case 'Feb':
+			return '2';
+		case 'Mar':
+			return '3';
+		case 'Apr':
+			return '4';
+		case 'May':
+			return '5';
+		case 'Jun':
+			return '6';
+		case 'Jul':
+			return '7';
+		case 'Aug':
+			return '8';
+		case 'Sep':
+			return '9';
+		case 'Oct':
+			return '10';
+		case 'Nov':
+			return '11';
+		default:
+			return '12';
+	}
+};
+var author$project$Calendar2$Internal$toUtcString = function (time) {
+	return author$project$Calendar2$Internal$toDanishMonth(
+		A2(elm$time$Time$toMonth, elm$time$Time$utc, time)) + ('/' + (elm$core$String$fromInt(
+		A2(elm$time$Time$toDay, elm$time$Time$utc, time)) + (' ' + (elm$core$String$fromInt(
+		A2(elm$time$Time$toHour, elm$time$Time$utc, time)) + (':' + (elm$core$String$fromInt(
+		A2(elm$time$Time$toMinute, elm$time$Time$utc, time)) + (':' + (elm$core$String$fromInt(
+		A2(elm$time$Time$toSecond, elm$time$Time$utc, time)) + ' (UTC)'))))))));
+};
+var elm$core$Debug$log = _Debug_log;
+var elm$core$Debug$toString = _Debug_toString;
 var elm$core$Maybe$map = F2(
 	function (f, maybe) {
 		if (maybe.$ === 'Just') {
@@ -5704,6 +5744,151 @@ var elm$core$Maybe$map = F2(
 			return elm$core$Maybe$Nothing;
 		}
 	});
+var norpan$elm_html5_drag_drop$Html5$DragDrop$getDragId = function (model) {
+	switch (model.$) {
+		case 'NotDragging':
+			return elm$core$Maybe$Nothing;
+		case 'Dragging':
+			var dragId = model.a;
+			return elm$core$Maybe$Just(dragId);
+		default:
+			var dragId = model.a;
+			var dropId = model.b;
+			return elm$core$Maybe$Just(dragId);
+	}
+};
+var norpan$elm_html5_drag_drop$Html5$DragDrop$getDropId = function (model) {
+	switch (model.$) {
+		case 'NotDragging':
+			return elm$core$Maybe$Nothing;
+		case 'Dragging':
+			var dragId = model.a;
+			return elm$core$Maybe$Nothing;
+		default:
+			var dragId = model.a;
+			var dropId = model.b;
+			return elm$core$Maybe$Just(dropId);
+	}
+};
+var norpan$elm_html5_drag_drop$Html5$DragDrop$DraggedOver = F4(
+	function (a, b, c, d) {
+		return {$: 'DraggedOver', a: a, b: b, c: c, d: d};
+	});
+var norpan$elm_html5_drag_drop$Html5$DragDrop$Dragging = function (a) {
+	return {$: 'Dragging', a: a};
+};
+var norpan$elm_html5_drag_drop$Html5$DragDrop$updateCommon = F3(
+	function (sticky, msg, model) {
+		var _n0 = _Utils_Tuple3(msg, model, sticky);
+		_n0$9:
+		while (true) {
+			switch (_n0.a.$) {
+				case 'DragStart':
+					var _n1 = _n0.a;
+					var dragId = _n1.a;
+					return _Utils_Tuple2(
+						norpan$elm_html5_drag_drop$Html5$DragDrop$Dragging(dragId),
+						elm$core$Maybe$Nothing);
+				case 'DragEnd':
+					var _n2 = _n0.a;
+					return _Utils_Tuple2(norpan$elm_html5_drag_drop$Html5$DragDrop$NotDragging, elm$core$Maybe$Nothing);
+				case 'DragEnter':
+					switch (_n0.b.$) {
+						case 'Dragging':
+							var dropId = _n0.a.a;
+							var dragId = _n0.b.a;
+							return _Utils_Tuple2(
+								A4(norpan$elm_html5_drag_drop$Html5$DragDrop$DraggedOver, dragId, dropId, 0, elm$core$Maybe$Nothing),
+								elm$core$Maybe$Nothing);
+						case 'DraggedOver':
+							var dropId = _n0.a.a;
+							var _n3 = _n0.b;
+							var dragId = _n3.a;
+							var pos = _n3.d;
+							return _Utils_Tuple2(
+								A4(norpan$elm_html5_drag_drop$Html5$DragDrop$DraggedOver, dragId, dropId, 0, pos),
+								elm$core$Maybe$Nothing);
+						default:
+							break _n0$9;
+					}
+				case 'DragLeave':
+					if ((_n0.b.$ === 'DraggedOver') && (!_n0.c)) {
+						var dropId_ = _n0.a.a;
+						var _n4 = _n0.b;
+						var dragId = _n4.a;
+						var dropId = _n4.b;
+						return _Utils_eq(dropId_, dropId) ? _Utils_Tuple2(
+							norpan$elm_html5_drag_drop$Html5$DragDrop$Dragging(dragId),
+							elm$core$Maybe$Nothing) : _Utils_Tuple2(model, elm$core$Maybe$Nothing);
+					} else {
+						break _n0$9;
+					}
+				case 'DragOver':
+					switch (_n0.b.$) {
+						case 'Dragging':
+							var _n5 = _n0.a;
+							var dropId = _n5.a;
+							var timeStamp = _n5.b;
+							var pos = _n5.c;
+							var dragId = _n0.b.a;
+							return _Utils_Tuple2(
+								A4(
+									norpan$elm_html5_drag_drop$Html5$DragDrop$DraggedOver,
+									dragId,
+									dropId,
+									timeStamp,
+									elm$core$Maybe$Just(pos)),
+								elm$core$Maybe$Nothing);
+						case 'DraggedOver':
+							var _n6 = _n0.a;
+							var dropId = _n6.a;
+							var timeStamp = _n6.b;
+							var pos = _n6.c;
+							var _n7 = _n0.b;
+							var dragId = _n7.a;
+							var currentDropId = _n7.b;
+							var currentTimeStamp = _n7.c;
+							var currentPos = _n7.d;
+							return _Utils_eq(timeStamp, currentTimeStamp) ? _Utils_Tuple2(model, elm$core$Maybe$Nothing) : _Utils_Tuple2(
+								A4(
+									norpan$elm_html5_drag_drop$Html5$DragDrop$DraggedOver,
+									dragId,
+									dropId,
+									timeStamp,
+									elm$core$Maybe$Just(pos)),
+								elm$core$Maybe$Nothing);
+						default:
+							break _n0$9;
+					}
+				default:
+					switch (_n0.b.$) {
+						case 'Dragging':
+							var _n8 = _n0.a;
+							var dropId = _n8.a;
+							var pos = _n8.b;
+							var dragId = _n0.b.a;
+							return _Utils_Tuple2(
+								norpan$elm_html5_drag_drop$Html5$DragDrop$NotDragging,
+								elm$core$Maybe$Just(
+									_Utils_Tuple3(dragId, dropId, pos)));
+						case 'DraggedOver':
+							var _n9 = _n0.a;
+							var dropId = _n9.a;
+							var pos = _n9.b;
+							var _n10 = _n0.b;
+							var dragId = _n10.a;
+							return _Utils_Tuple2(
+								norpan$elm_html5_drag_drop$Html5$DragDrop$NotDragging,
+								elm$core$Maybe$Just(
+									_Utils_Tuple3(dragId, dropId, pos)));
+						default:
+							break _n0$9;
+					}
+			}
+		}
+		return _Utils_Tuple2(model, elm$core$Maybe$Nothing);
+	});
+var norpan$elm_html5_drag_drop$Html5$DragDrop$update = norpan$elm_html5_drag_drop$Html5$DragDrop$updateCommon(false);
 var author$project$Calendar2$Internal$update = F4(
 	function (eventConfig, timeSlotConfig, msg, state) {
 		switch (msg.$) {
@@ -5838,7 +6023,7 @@ var author$project$Calendar2$Internal$update = F4(
 						eventConfig.onDragging,
 						eventId,
 						A2(author$project$Calendar2$Internal$getTimeDiffForPosition, me, state)));
-			default:
+			case 'EventDragEnd':
 				var eventId = msg.a;
 				var xy = msg.b;
 				return _Utils_Tuple2(
@@ -5849,6 +6034,38 @@ var author$project$Calendar2$Internal$update = F4(
 						eventConfig.onDragEnd,
 						eventId,
 						A2(author$project$Calendar2$Internal$getTimeDiffForPosition, xy, state)));
+			default:
+				var msg_ = msg.a;
+				var _n3 = A2(norpan$elm_html5_drag_drop$Html5$DragDrop$update, msg_, state.dragDrop);
+				var dragdrop_model_ = _n3.a;
+				var result = _n3.b;
+				var dragId = norpan$elm_html5_drag_drop$Html5$DragDrop$getDragId(dragdrop_model_);
+				var dropId = norpan$elm_html5_drag_drop$Html5$DragDrop$getDropId(dragdrop_model_);
+				var r = function () {
+					if (result.$ === 'Just') {
+						var _n5 = result.a;
+						var id = _n5.a;
+						var time = _n5.b;
+						var pos = _n5.c;
+						return A4(
+							elm$core$Debug$log,
+							'id=' + (id + (' ' + author$project$Calendar2$Internal$toUtcString(time))),
+							elm$core$Debug$log,
+							elm$core$Debug$toString(pos),
+							_Utils_Tuple2(
+								_Utils_update(
+									state,
+									{dragDrop: dragdrop_model_}),
+								A2(eventConfig.onEventMove, id, time)));
+					} else {
+						return _Utils_Tuple2(
+							_Utils_update(
+								state,
+								{dragDrop: dragdrop_model_}),
+							elm$core$Maybe$Nothing);
+					}
+				}();
+				return r;
 		}
 	});
 var author$project$Calendar2$update = F4(
@@ -5874,8 +6091,9 @@ var author$project$Calendar2$eventConfig = function (_n0) {
 	var onDragStart = _n0.onDragStart;
 	var onDragging = _n0.onDragging;
 	var onDragEnd = _n0.onDragEnd;
+	var onEventMove = _n0.onEventMove;
 	return author$project$Calendar2$EventConfig(
-		{onClick: onClick, onDragEnd: onDragEnd, onDragStart: onDragStart, onDragging: onDragging, onMouseEnter: onMouseEnter, onMouseLeave: onMouseLeave});
+		{onClick: onClick, onDragEnd: onDragEnd, onDragStart: onDragStart, onDragging: onDragging, onEventMove: onEventMove, onMouseEnter: onMouseEnter, onMouseLeave: onMouseLeave});
 };
 var author$project$Main$eventConfig = author$project$Calendar2$eventConfig(
 	{
@@ -5893,10 +6111,14 @@ var author$project$Main$eventConfig = author$project$Calendar2$eventConfig(
 			function (_n4, _n5) {
 				return elm$core$Maybe$Nothing;
 			}),
-		onMouseEnter: function (_n6) {
+		onEventMove: F2(
+			function (_n6, _n7) {
+				return elm$core$Maybe$Nothing;
+			}),
+		onMouseEnter: function (_n8) {
 			return elm$core$Maybe$Nothing;
 		},
-		onMouseLeave: function (_n7) {
+		onMouseLeave: function (_n9) {
 			return elm$core$Maybe$Nothing;
 		}
 	});
@@ -6341,6 +6563,33 @@ var author$project$Calendar2$Agenda$viewAgendaRow = F2(
 				]),
 			A2(author$project$Calendar2$Agenda$viewTimeAndEvent, config, event));
 	});
+var author$project$Calendar2$Agenda$toJapaneseWeekday = function (n) {
+	_n0$6:
+	while (true) {
+		if (n.$ === 'Just') {
+			switch (n.a) {
+				case 1:
+					return '月';
+				case 2:
+					return '火';
+				case 3:
+					return '水';
+				case 4:
+					return '木';
+				case 5:
+					return '金';
+				case 6:
+					return '土';
+				default:
+					break _n0$6;
+			}
+		} else {
+			break _n0$6;
+		}
+	}
+	return '日';
+};
+var elm$core$String$toInt = _String_toInt;
 var elm$html$Html$Attributes$rowspan = function (n) {
 	return A2(
 		_VirtualDom_attribute,
@@ -7372,7 +7621,9 @@ var justinmimbs$date$Date$format = function (pattern) {
 };
 var author$project$Calendar2$Agenda$viewAgendaRowWithDate = F3(
 	function (config, eventGroup, event) {
-		var dateString = A2(justinmimbs$date$Date$format, 'EE MM d', eventGroup.date);
+		var dateString = A2(justinmimbs$date$Date$format, ' MM / dd ', eventGroup.date) + ('   (' + (author$project$Calendar2$Agenda$toJapaneseWeekday(
+			elm$core$String$toInt(
+				A2(justinmimbs$date$Date$format, 'e', eventGroup.date))) + ')'));
 		var timeCell = A2(
 			elm$html$Html$td,
 			_List_fromArray(
@@ -7666,6 +7917,9 @@ var author$project$Calendar2$Event$eventStyling = F5(
 				]),
 			styles);
 	});
+var author$project$Calendar2$Msg$DragDropMsg = function (a) {
+	return {$: 'DragDropMsg', a: a};
+};
 var author$project$Calendar2$Msg$EventClick = function (a) {
 	return {$: 'EventClick', a: a};
 };
@@ -7718,6 +7972,68 @@ var elm$html$Html$Events$onMouseLeave = function (msg) {
 		'mouseleave',
 		elm$json$Json$Decode$succeed(msg));
 };
+var elm$virtual_dom$VirtualDom$attribute = F2(
+	function (key, value) {
+		return A2(
+			_VirtualDom_attribute,
+			_VirtualDom_noOnOrFormAction(key),
+			_VirtualDom_noJavaScriptOrHtmlUri(value));
+	});
+var elm$html$Html$Attributes$attribute = elm$virtual_dom$VirtualDom$attribute;
+var elm$json$Json$Decode$value = _Json_decodeValue;
+var norpan$elm_html5_drag_drop$Html5$DragDrop$DragEnd = {$: 'DragEnd'};
+var norpan$elm_html5_drag_drop$Html5$DragDrop$DragStart = F2(
+	function (a, b) {
+		return {$: 'DragStart', a: a, b: b};
+	});
+var elm$virtual_dom$VirtualDom$Custom = function (a) {
+	return {$: 'Custom', a: a};
+};
+var elm$html$Html$Events$custom = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Custom(decoder));
+	});
+var norpan$elm_html5_drag_drop$Html5$DragDrop$onWithOptions = F3(
+	function (name, _n0, decoder) {
+		var stopPropagation = _n0.stopPropagation;
+		var preventDefault = _n0.preventDefault;
+		return A2(
+			elm$html$Html$Events$custom,
+			name,
+			A2(
+				elm$json$Json$Decode$map,
+				function (msg) {
+					return {message: msg, preventDefault: preventDefault, stopPropagation: stopPropagation};
+				},
+				decoder));
+	});
+var norpan$elm_html5_drag_drop$Html5$DragDrop$draggable = F2(
+	function (wrap, drag) {
+		return _List_fromArray(
+			[
+				A2(elm$html$Html$Attributes$attribute, 'draggable', 'true'),
+				A3(
+				norpan$elm_html5_drag_drop$Html5$DragDrop$onWithOptions,
+				'dragstart',
+				{preventDefault: false, stopPropagation: true},
+				A2(
+					elm$json$Json$Decode$map,
+					A2(
+						elm$core$Basics$composeL,
+						wrap,
+						norpan$elm_html5_drag_drop$Html5$DragDrop$DragStart(drag)),
+					elm$json$Json$Decode$value)),
+				A3(
+				norpan$elm_html5_drag_drop$Html5$DragDrop$onWithOptions,
+				'dragend',
+				{preventDefault: false, stopPropagation: true},
+				elm$json$Json$Decode$succeed(
+					wrap(norpan$elm_html5_drag_drop$Html5$DragDrop$DragEnd)))
+			]);
+	});
 var author$project$Calendar2$Event$eventSegment = F5(
 	function (config, event, selectedId, eventRange, timeSpan) {
 		var eventId = config.toId(event);
@@ -7745,7 +8061,9 @@ var author$project$Calendar2$Event$eventSegment = F5(
 						elm$html$Html$Events$onMouseLeave(
 						author$project$Calendar2$Msg$EventMouseLeave(eventId))
 					]),
-				A5(author$project$Calendar2$Event$eventStyling, config, event, eventRange, timeSpan, classes)),
+				_Utils_ap(
+					A2(norpan$elm_html5_drag_drop$Html5$DragDrop$draggable, author$project$Calendar2$Msg$DragDropMsg, eventId),
+					A5(author$project$Calendar2$Event$eventStyling, config, event, eventRange, timeSpan, classes))),
 			children);
 	});
 var author$project$Calendar2$Event$maybeViewDayEvent = F4(
@@ -8026,14 +8344,10 @@ var author$project$Calendar2$Event$isBefore = F2(
 	});
 var author$project$Calendar2$Event$isBetween = F3(
 	function (begin, end, target) {
-		var dt_target = PanagiotisGeorgiadis$elm_datetime$DateTime$fromPosix(target);
-		var dt_end = PanagiotisGeorgiadis$elm_datetime$DateTime$fromPosix(end);
-		var dt_begin = PanagiotisGeorgiadis$elm_datetime$DateTime$fromPosix(begin);
-		return _Utils_eq(
-			A2(PanagiotisGeorgiadis$elm_datetime$DateTime$compare, dt_begin, dt_target),
-			elm$core$Basics$LT) ? (_Utils_eq(
-			A2(PanagiotisGeorgiadis$elm_datetime$DateTime$compare, dt_target, dt_end),
-			elm$core$Basics$LT) ? true : false) : false;
+		var target_ = elm$time$Time$posixToMillis(target);
+		var end_ = elm$time$Time$posixToMillis(end);
+		var begin_ = elm$time$Time$posixToMillis(begin);
+		return (_Utils_cmp(begin_, target_) < 1) ? ((_Utils_cmp(target_, end_) < 1) ? true : false) : false;
 	});
 var justinmimbs$date$Date$Friday = {$: 'Friday'};
 var justinmimbs$date$Date$Monday = {$: 'Monday'};
@@ -8120,26 +8434,15 @@ var justinmimbs$time_extra$Time$Extra$floor = F3(
 				return A3(justinmimbs$time_extra$Time$Extra$floorDate, justinmimbs$date$Date$Sunday, zone, posix);
 		}
 	});
-var justinmimbs$time_extra$Time$Extra$posixToParts = F2(
-	function (zone, posix) {
-		return {
-			day: A2(elm$time$Time$toDay, zone, posix),
-			hour: A2(elm$time$Time$toHour, zone, posix),
-			millisecond: A2(elm$time$Time$toMillis, zone, posix),
-			minute: A2(elm$time$Time$toMinute, zone, posix),
-			month: A2(elm$time$Time$toMonth, zone, posix),
-			second: A2(elm$time$Time$toSecond, zone, posix),
-			year: A2(elm$time$Time$toYear, zone, posix)
-		};
-	});
-var author$project$Calendar2$Event$rangeDescription = F4(
+var author$project$Calendar2$Event$rangeDescriptionFromDay = F4(
 	function (start, end, interval, posix) {
-		var start_parts = A2(justinmimbs$time_extra$Time$Extra$posixToParts, elm$time$Time$utc, start);
-		var parts = A2(justinmimbs$time_extra$Time$Extra$posixToParts, elm$time$Time$utc, posix);
-		var end_parts = A2(justinmimbs$time_extra$Time$Extra$posixToParts, elm$time$Time$utc, end);
-		var endInterval = A4(justinmimbs$time_extra$Time$Extra$add, interval, 1, elm$time$Time$utc, posix);
+		var endInterval = A3(
+			justinmimbs$time_extra$Time$Extra$floor,
+			justinmimbs$time_extra$Time$Extra$Day,
+			elm$time$Time$utc,
+			A4(justinmimbs$time_extra$Time$Extra$add, justinmimbs$time_extra$Time$Extra$Day, 1, elm$time$Time$utc, posix));
 		var endsAfterInterval = A2(author$project$Calendar2$Event$isAfter, endInterval, end);
-		var begInterval = A3(justinmimbs$time_extra$Time$Extra$floor, interval, elm$time$Time$utc, posix);
+		var begInterval = A3(justinmimbs$time_extra$Time$Extra$floor, justinmimbs$time_extra$Time$Extra$Day, elm$time$Time$utc, posix);
 		var endsThisInterval = A3(author$project$Calendar2$Event$isBetween, begInterval, endInterval, end);
 		var startsBeforeInterval = A2(author$project$Calendar2$Event$isBefore, begInterval, start);
 		var startsThisInterval = A3(author$project$Calendar2$Event$isBetween, begInterval, endInterval, start);
@@ -8149,7 +8452,7 @@ var author$project$Calendar2$Day$viewDayEvent = F4(
 	function (config, day, selectedId, event) {
 		var eventStart = config.start(event);
 		var eventEnd = config.end(event);
-		var eventRange = A4(author$project$Calendar2$Event$rangeDescription, eventStart, eventEnd, justinmimbs$time_extra$Time$Extra$Day, day);
+		var eventRange = A4(author$project$Calendar2$Event$rangeDescriptionFromDay, eventStart, eventEnd, justinmimbs$time_extra$Time$Extra$Day, day);
 		return A4(author$project$Calendar2$Event$maybeViewDayEvent, config, event, selectedId, eventRange);
 	});
 var elm$core$List$maybeCons = F3(
@@ -8194,16 +8497,6 @@ var author$project$Calendar2$Msg$TimeSlotMouseLeave = F2(
 		return {$: 'TimeSlotMouseLeave', a: a, b: b};
 	});
 var mpizenberg$elm_pointer_events$Html$Events$Extra$Mouse$defaultOptions = {preventDefault: true, stopPropagation: false};
-var elm$virtual_dom$VirtualDom$Custom = function (a) {
-	return {$: 'Custom', a: a};
-};
-var elm$html$Html$Events$custom = F2(
-	function (event, decoder) {
-		return A2(
-			elm$virtual_dom$VirtualDom$on,
-			event,
-			elm$virtual_dom$VirtualDom$Custom(decoder));
-	});
 var elm$json$Json$Decode$map6 = _Json_map6;
 var mpizenberg$elm_pointer_events$Html$Events$Extra$Mouse$Event = F6(
 	function (keys, button, clientPos, offsetPos, pagePos, screenPos) {
@@ -8303,29 +8596,135 @@ var mpizenberg$elm_pointer_events$Html$Events$Extra$Mouse$onClick = A2(mpizenber
 var mpizenberg$elm_pointer_events$Html$Events$Extra$Mouse$onDown = A2(mpizenberg$elm_pointer_events$Html$Events$Extra$Mouse$onWithOptions, 'mousedown', mpizenberg$elm_pointer_events$Html$Events$Extra$Mouse$defaultOptions);
 var mpizenberg$elm_pointer_events$Html$Events$Extra$Mouse$onEnter = A2(mpizenberg$elm_pointer_events$Html$Events$Extra$Mouse$onWithOptions, 'mouseenter', mpizenberg$elm_pointer_events$Html$Events$Extra$Mouse$defaultOptions);
 var mpizenberg$elm_pointer_events$Html$Events$Extra$Mouse$onLeave = A2(mpizenberg$elm_pointer_events$Html$Events$Extra$Mouse$onWithOptions, 'mouseleave', mpizenberg$elm_pointer_events$Html$Events$Extra$Mouse$defaultOptions);
+var norpan$elm_html5_drag_drop$Html5$DragDrop$DragEnter = function (a) {
+	return {$: 'DragEnter', a: a};
+};
+var norpan$elm_html5_drag_drop$Html5$DragDrop$DragLeave = function (a) {
+	return {$: 'DragLeave', a: a};
+};
+var norpan$elm_html5_drag_drop$Html5$DragDrop$DragOver = F3(
+	function (a, b, c) {
+		return {$: 'DragOver', a: a, b: b, c: c};
+	});
+var norpan$elm_html5_drag_drop$Html5$DragDrop$Drop = F2(
+	function (a, b) {
+		return {$: 'Drop', a: a, b: b};
+	});
+var elm$core$Basics$round = _Basics_round;
+var elm$json$Json$Decode$at = F2(
+	function (fields, decoder) {
+		return A3(elm$core$List$foldr, elm$json$Json$Decode$field, decoder, fields);
+	});
+var elm$json$Json$Decode$map4 = _Json_map4;
+var norpan$elm_html5_drag_drop$Html5$DragDrop$Position = F4(
+	function (width, height, x, y) {
+		return {height: height, width: width, x: x, y: y};
+	});
+var norpan$elm_html5_drag_drop$Html5$DragDrop$positionDecoder = A5(
+	elm$json$Json$Decode$map4,
+	norpan$elm_html5_drag_drop$Html5$DragDrop$Position,
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['currentTarget', 'clientWidth']),
+		elm$json$Json$Decode$int),
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['currentTarget', 'clientHeight']),
+		elm$json$Json$Decode$int),
+	A2(
+		elm$json$Json$Decode$map,
+		elm$core$Basics$round,
+		A2(
+			elm$json$Json$Decode$at,
+			_List_fromArray(
+				['offsetX']),
+			elm$json$Json$Decode$float)),
+	A2(
+		elm$json$Json$Decode$map,
+		elm$core$Basics$round,
+		A2(
+			elm$json$Json$Decode$at,
+			_List_fromArray(
+				['offsetY']),
+			elm$json$Json$Decode$float)));
+var norpan$elm_html5_drag_drop$Html5$DragDrop$timeStampDecoder = A2(
+	elm$json$Json$Decode$map,
+	elm$core$Basics$round,
+	A2(
+		elm$json$Json$Decode$at,
+		_List_fromArray(
+			['timeStamp']),
+		elm$json$Json$Decode$float));
+var norpan$elm_html5_drag_drop$Html5$DragDrop$droppable = F2(
+	function (wrap, dropId) {
+		return _List_fromArray(
+			[
+				A3(
+				norpan$elm_html5_drag_drop$Html5$DragDrop$onWithOptions,
+				'dragenter',
+				{preventDefault: true, stopPropagation: true},
+				elm$json$Json$Decode$succeed(
+					wrap(
+						norpan$elm_html5_drag_drop$Html5$DragDrop$DragEnter(dropId)))),
+				A3(
+				norpan$elm_html5_drag_drop$Html5$DragDrop$onWithOptions,
+				'dragleave',
+				{preventDefault: true, stopPropagation: true},
+				elm$json$Json$Decode$succeed(
+					wrap(
+						norpan$elm_html5_drag_drop$Html5$DragDrop$DragLeave(dropId)))),
+				A3(
+				norpan$elm_html5_drag_drop$Html5$DragDrop$onWithOptions,
+				'dragover',
+				{preventDefault: true, stopPropagation: false},
+				A2(
+					elm$json$Json$Decode$map,
+					wrap,
+					A3(
+						elm$json$Json$Decode$map2,
+						norpan$elm_html5_drag_drop$Html5$DragDrop$DragOver(dropId),
+						norpan$elm_html5_drag_drop$Html5$DragDrop$timeStampDecoder,
+						norpan$elm_html5_drag_drop$Html5$DragDrop$positionDecoder))),
+				A3(
+				norpan$elm_html5_drag_drop$Html5$DragDrop$onWithOptions,
+				'drop',
+				{preventDefault: true, stopPropagation: true},
+				A2(
+					elm$json$Json$Decode$map,
+					A2(
+						elm$core$Basics$composeL,
+						wrap,
+						norpan$elm_html5_drag_drop$Html5$DragDrop$Drop(dropId)),
+					norpan$elm_html5_drag_drop$Html5$DragDrop$positionDecoder))
+			]);
+	});
 var author$project$Calendar2$Day$viewTimeSlot = function (date) {
 	return A2(
 		elm$html$Html$div,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('elm-calendar--time-slot'),
-				mpizenberg$elm_pointer_events$Html$Events$Extra$Mouse$onClick(
-				function (event) {
-					return A2(author$project$Calendar2$Msg$TimeSlotClick, date, event);
-				}),
-				mpizenberg$elm_pointer_events$Html$Events$Extra$Mouse$onEnter(
-				function (event) {
-					return A2(author$project$Calendar2$Msg$TimeSlotMouseEnter, date, event);
-				}),
-				mpizenberg$elm_pointer_events$Html$Events$Extra$Mouse$onLeave(
-				function (event) {
-					return A2(author$project$Calendar2$Msg$TimeSlotMouseLeave, date, event);
-				}),
-				mpizenberg$elm_pointer_events$Html$Events$Extra$Mouse$onDown(
-				function (event) {
-					return A2(author$project$Calendar2$Msg$TimeSlotDragStart, date, event);
-				})
-			]),
+		_Utils_ap(
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('elm-calendar--time-slot'),
+					mpizenberg$elm_pointer_events$Html$Events$Extra$Mouse$onClick(
+					function (event) {
+						return A2(author$project$Calendar2$Msg$TimeSlotClick, date, event);
+					}),
+					mpizenberg$elm_pointer_events$Html$Events$Extra$Mouse$onEnter(
+					function (event) {
+						return A2(author$project$Calendar2$Msg$TimeSlotMouseEnter, date, event);
+					}),
+					mpizenberg$elm_pointer_events$Html$Events$Extra$Mouse$onLeave(
+					function (event) {
+						return A2(author$project$Calendar2$Msg$TimeSlotMouseLeave, date, event);
+					}),
+					mpizenberg$elm_pointer_events$Html$Events$Extra$Mouse$onDown(
+					function (event) {
+						return A2(author$project$Calendar2$Msg$TimeSlotDragStart, date, event);
+					})
+				]),
+			A2(norpan$elm_html5_drag_drop$Html5$DragDrop$droppable, author$project$Calendar2$Msg$DragDropMsg, date)),
 		_List_Nil);
 };
 var author$project$Calendar2$Day$viewDaySlotGroup = function (date) {
@@ -8700,13 +9099,15 @@ var author$project$Calendar2$Month$viewMonthRowBackground = function (week) {
 			]),
 		A2(
 			elm$core$List$map,
-			function (_n0) {
+			function (day) {
 				return A2(
 					elm$html$Html$div,
-					_List_fromArray(
-						[
-							elm$html$Html$Attributes$class('elm-calendar--cell')
-						]),
+					_Utils_ap(
+						_List_fromArray(
+							[
+								elm$html$Html$Attributes$class('elm-calendar--cell')
+							]),
+						A2(norpan$elm_html5_drag_drop$Html5$DragDrop$droppable, author$project$Calendar2$Msg$DragDropMsg, day)),
 					_List_Nil);
 			},
 			week));
@@ -8827,6 +9228,16 @@ var author$project$Calendar2$Event$maybeViewMonthEvent = F4(
 				A4(author$project$Calendar2$Event$viewMonthEvent, config, event, selectedId, eventRange));
 		}
 	});
+var author$project$Calendar2$Event$rangeDescriptionFromMonth = F4(
+	function (start, end, interval, posix) {
+		var endInterval = A4(justinmimbs$time_extra$Time$Extra$add, interval, 1, elm$time$Time$utc, posix);
+		var endsAfterInterval = A2(author$project$Calendar2$Event$isAfter, endInterval, end);
+		var begInterval = A3(justinmimbs$time_extra$Time$Extra$floor, interval, elm$time$Time$utc, posix);
+		var endsThisInterval = A3(author$project$Calendar2$Event$isBetween, begInterval, endInterval, end);
+		var startsBeforeInterval = A2(author$project$Calendar2$Event$isBefore, begInterval, start);
+		var startsThisInterval = A3(author$project$Calendar2$Event$isBetween, begInterval, endInterval, start);
+		return (startsThisInterval && endsThisInterval) ? author$project$Calendar2$Event$StartsAndEnds : ((startsBeforeInterval && endsAfterInterval) ? author$project$Calendar2$Event$ContinuesAfterAndPrior : ((startsThisInterval && endsAfterInterval) ? author$project$Calendar2$Event$ContinuesAfter : ((endsThisInterval && startsBeforeInterval) ? author$project$Calendar2$Event$ContinuesPrior : author$project$Calendar2$Event$ExistsOutside)));
+	});
 var elm$core$List$head = function (list) {
 	if (list.b) {
 		var x = list.a;
@@ -8851,7 +9262,7 @@ var author$project$Calendar2$Month$viewWeekEvent = F4(
 		var eventStart = config.start(event);
 		var eventEnd = config.end(event);
 		var eventRange = function (sunday) {
-			return A4(author$project$Calendar2$Event$rangeDescription, eventStart, eventEnd, justinmimbs$time_extra$Time$Extra$Sunday, sunday);
+			return A4(author$project$Calendar2$Event$rangeDescriptionFromMonth, eventStart, eventEnd, justinmimbs$time_extra$Time$Extra$Sunday, sunday);
 		};
 		return A2(
 			elm$core$Maybe$andThen,
@@ -8991,7 +9402,7 @@ var author$project$Calendar2$Month$viewMonthRowContent = F4(
 	function (config, events, selectedId, week) {
 		var eventRows = A2(
 			elm$core$List$take,
-			3,
+			1,
 			A2(
 				elm$core$List$filterMap,
 				A3(author$project$Calendar2$Month$viewWeekEvent, config, week, selectedId),
@@ -9140,6 +9551,7 @@ var author$project$Calendar2$Week$viewWeekDay = F4(
 	});
 var author$project$Calendar2$Week$viewWeekContent = F5(
 	function (config, events, selectedId, viewing, days) {
+		var _n0 = elm$core$Debug$log('OK');
 		var weekDays = A2(
 			elm$core$List$map,
 			A3(author$project$Calendar2$Week$viewWeekDay, config, events, selectedId),
@@ -9284,56 +9696,72 @@ var author$project$Calendar2$view = F3(
 			author$project$Calendar2$Internal,
 			A3(author$project$Calendar2$Internal$view, config, events, state));
 	});
-var author$project$Fixtures$eventFour = {
-	end: A2(
-		justinmimbs$time_extra$Time$Extra$partsToPosix,
-		elm$time$Time$utc,
-		A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 9, 7, 0, 0, 0)),
-	id: '4',
-	start: A2(
-		justinmimbs$time_extra$Time$Extra$partsToPosix,
-		elm$time$Time$utc,
-		A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 9, 4, 0, 0, 0)),
-	title: 'GUSA4/ Friends'
-};
-var author$project$Fixtures$eventOne = {
-	end: A2(
-		justinmimbs$time_extra$Time$Extra$partsToPosix,
-		elm$time$Time$utc,
-		A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 9, 5, 0, 0, 0)),
-	id: '1',
-	start: A2(
-		justinmimbs$time_extra$Time$Extra$partsToPosix,
-		elm$time$Time$utc,
-		A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 9, 3, 0, 0, 0)),
-	title: 'GUSA1/ Friends'
-};
-var author$project$Fixtures$eventThree = {
-	end: A2(
-		justinmimbs$time_extra$Time$Extra$partsToPosix,
-		elm$time$Time$utc,
-		A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 9, 20, 0, 0, 0)),
-	id: '3',
-	start: A2(
-		justinmimbs$time_extra$Time$Extra$partsToPosix,
-		elm$time$Time$utc,
-		A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 9, 17, 0, 0, 0)),
-	title: 'GUSA3/ Friends'
-};
-var author$project$Fixtures$eventTwo = {
-	end: A2(
-		justinmimbs$time_extra$Time$Extra$partsToPosix,
-		elm$time$Time$utc,
-		A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 9, 13, 0, 0, 0)),
-	id: '2',
-	start: A2(
-		justinmimbs$time_extra$Time$Extra$partsToPosix,
-		elm$time$Time$utc,
-		A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 9, 12, 0, 0, 0)),
-	title: 'GUSA2/ Friends'
-};
+var author$project$Fixtures$Event = F4(
+	function (id, title, start, end) {
+		return {end: end, id: id, start: start, title: title};
+	});
+var author$project$Fixtures$evt = F9(
+	function (id, title, yyyy, mm, dd, shh, smm, ehh, emm) {
+		var start_ = A2(
+			justinmimbs$time_extra$Time$Extra$partsToPosix,
+			elm$time$Time$utc,
+			A7(
+				justinmimbs$time_extra$Time$Extra$Parts,
+				yyyy,
+				justinmimbs$date$Date$numberToMonth(mm),
+				dd,
+				shh,
+				smm,
+				0,
+				0));
+		var id_ = elm$core$String$fromInt(id);
+		var end_ = A2(
+			justinmimbs$time_extra$Time$Extra$partsToPosix,
+			elm$time$Time$utc,
+			A7(
+				justinmimbs$time_extra$Time$Extra$Parts,
+				yyyy,
+				justinmimbs$date$Date$numberToMonth(mm),
+				dd,
+				ehh,
+				emm,
+				0,
+				0));
+		return A4(author$project$Fixtures$Event, id_, title, start_, end_);
+	});
+var author$project$Fixtures$e01 = A9(author$project$Fixtures$evt, 1, 'id 1', 2020, 10, 1, 3, 0, 5, 0);
+var author$project$Fixtures$e02 = A9(author$project$Fixtures$evt, 2, 'id 2', 2020, 10, 2, 3, 0, 5, 0);
+var author$project$Fixtures$e03 = A9(author$project$Fixtures$evt, 3, 'id 3', 2020, 10, 3, 3, 0, 5, 0);
+var author$project$Fixtures$e04 = A9(author$project$Fixtures$evt, 4, 'id 4', 2020, 10, 4, 3, 0, 5, 0);
+var author$project$Fixtures$e05 = A9(author$project$Fixtures$evt, 5, 'id 5', 2020, 10, 5, 3, 0, 5, 0);
+var author$project$Fixtures$e06 = A9(author$project$Fixtures$evt, 6, 'id 6', 2020, 10, 6, 3, 0, 5, 0);
+var author$project$Fixtures$e07 = A9(author$project$Fixtures$evt, 7, 'id 7', 2020, 10, 7, 3, 0, 5, 0);
+var author$project$Fixtures$e08 = A9(author$project$Fixtures$evt, 8, 'id 8', 2020, 10, 8, 3, 0, 5, 0);
+var author$project$Fixtures$e09 = A9(author$project$Fixtures$evt, 9, 'id 9', 2020, 10, 9, 3, 0, 5, 0);
+var author$project$Fixtures$e10 = A9(author$project$Fixtures$evt, 10, 'id 10', 2020, 10, 10, 3, 0, 5, 0);
+var author$project$Fixtures$e11 = A9(author$project$Fixtures$evt, 11, 'id 11', 2020, 10, 11, 3, 0, 5, 0);
+var author$project$Fixtures$e12 = A9(author$project$Fixtures$evt, 12, 'id 12', 2020, 10, 12, 3, 0, 5, 0);
+var author$project$Fixtures$e13 = A9(author$project$Fixtures$evt, 13, 'id 13', 2020, 10, 13, 3, 0, 5, 0);
+var author$project$Fixtures$e14 = A9(author$project$Fixtures$evt, 14, 'id 14', 2020, 10, 14, 3, 0, 5, 0);
+var author$project$Fixtures$e15 = A9(author$project$Fixtures$evt, 15, 'id 15', 2020, 10, 15, 3, 0, 5, 0);
+var author$project$Fixtures$e16 = A9(author$project$Fixtures$evt, 16, 'id 16', 2020, 10, 16, 3, 0, 5, 0);
+var author$project$Fixtures$e17 = A9(author$project$Fixtures$evt, 17, 'id 17', 2020, 10, 17, 3, 0, 5, 0);
+var author$project$Fixtures$e18 = A9(author$project$Fixtures$evt, 18, 'id 18', 2020, 10, 18, 3, 0, 5, 0);
+var author$project$Fixtures$e19 = A9(author$project$Fixtures$evt, 19, 'id 19', 2020, 10, 19, 3, 0, 5, 0);
+var author$project$Fixtures$e20 = A9(author$project$Fixtures$evt, 20, 'id 20', 2020, 10, 20, 3, 0, 5, 0);
+var author$project$Fixtures$e21 = A9(author$project$Fixtures$evt, 21, 'id 21', 2020, 10, 21, 3, 0, 5, 0);
+var author$project$Fixtures$e22 = A9(author$project$Fixtures$evt, 22, 'id 22', 2020, 10, 22, 3, 0, 5, 0);
+var author$project$Fixtures$e23 = A9(author$project$Fixtures$evt, 23, 'id 23', 2020, 10, 23, 3, 0, 5, 0);
+var author$project$Fixtures$e24 = A9(author$project$Fixtures$evt, 24, 'id 24', 2020, 10, 24, 3, 0, 5, 0);
+var author$project$Fixtures$e25 = A9(author$project$Fixtures$evt, 25, 'id 25', 2020, 10, 25, 3, 0, 5, 0);
+var author$project$Fixtures$e26 = A9(author$project$Fixtures$evt, 26, 'id 26', 2020, 10, 26, 3, 0, 5, 0);
+var author$project$Fixtures$e27 = A9(author$project$Fixtures$evt, 27, 'id 27', 2020, 10, 27, 3, 0, 5, 0);
+var author$project$Fixtures$e28 = A9(author$project$Fixtures$evt, 28, 'id 28', 2020, 10, 28, 3, 0, 5, 0);
+var author$project$Fixtures$e29 = A9(author$project$Fixtures$evt, 29, 'id 29', 2020, 10, 29, 3, 0, 5, 0);
+var author$project$Fixtures$e30 = A9(author$project$Fixtures$evt, 30, 'id 30', 2020, 10, 30, 3, 0, 5, 0);
+var author$project$Fixtures$e31 = A9(author$project$Fixtures$evt, 31, 'id 31', 2020, 10, 31, 3, 0, 5, 0);
 var author$project$Fixtures$events = _List_fromArray(
-	[author$project$Fixtures$eventOne, author$project$Fixtures$eventTwo, author$project$Fixtures$eventThree, author$project$Fixtures$eventFour]);
+	[author$project$Fixtures$e01, author$project$Fixtures$e02, author$project$Fixtures$e03, author$project$Fixtures$e04, author$project$Fixtures$e05, author$project$Fixtures$e06, author$project$Fixtures$e07, author$project$Fixtures$e08, author$project$Fixtures$e09, author$project$Fixtures$e10, author$project$Fixtures$e11, author$project$Fixtures$e12, author$project$Fixtures$e13, author$project$Fixtures$e14, author$project$Fixtures$e15, author$project$Fixtures$e16, author$project$Fixtures$e17, author$project$Fixtures$e18, author$project$Fixtures$e19, author$project$Fixtures$e20, author$project$Fixtures$e21, author$project$Fixtures$e22, author$project$Fixtures$e23, author$project$Fixtures$e24, author$project$Fixtures$e25, author$project$Fixtures$e26, author$project$Fixtures$e27, author$project$Fixtures$e28, author$project$Fixtures$e29, author$project$Fixtures$e30, author$project$Fixtures$e31]);
 var author$project$Main$SetCalendarState = function (a) {
 	return {$: 'SetCalendarState', a: a};
 };
@@ -9527,7 +9955,6 @@ var elm$url$Url$Http = {$: 'Http'};
 var elm$url$Url$Https = {$: 'Https'};
 var elm$core$String$indexes = _String_indexes;
 var elm$core$String$contains = _String_contains;
-var elm$core$String$toInt = _String_toInt;
 var elm$url$Url$Url = F6(
 	function (protocol, host, port_, path, query, fragment) {
 		return {fragment: fragment, host: host, path: path, port_: port_, protocol: protocol, query: query};

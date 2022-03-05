@@ -793,6 +793,66 @@ var _List_sortWith = F2(function(f, xs)
 
 
 
+// MATH
+
+var _Basics_add = F2(function(a, b) { return a + b; });
+var _Basics_sub = F2(function(a, b) { return a - b; });
+var _Basics_mul = F2(function(a, b) { return a * b; });
+var _Basics_fdiv = F2(function(a, b) { return a / b; });
+var _Basics_idiv = F2(function(a, b) { return (a / b) | 0; });
+var _Basics_pow = F2(Math.pow);
+
+var _Basics_remainderBy = F2(function(b, a) { return a % b; });
+
+// https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/divmodnote-letter.pdf
+var _Basics_modBy = F2(function(modulus, x)
+{
+	var answer = x % modulus;
+	return modulus === 0
+		? _Debug_crash(11)
+		:
+	((answer > 0 && modulus < 0) || (answer < 0 && modulus > 0))
+		? answer + modulus
+		: answer;
+});
+
+
+// TRIGONOMETRY
+
+var _Basics_pi = Math.PI;
+var _Basics_e = Math.E;
+var _Basics_cos = Math.cos;
+var _Basics_sin = Math.sin;
+var _Basics_tan = Math.tan;
+var _Basics_acos = Math.acos;
+var _Basics_asin = Math.asin;
+var _Basics_atan = Math.atan;
+var _Basics_atan2 = F2(Math.atan2);
+
+
+// MORE MATH
+
+function _Basics_toFloat(x) { return x; }
+function _Basics_truncate(n) { return n | 0; }
+function _Basics_isInfinite(n) { return n === Infinity || n === -Infinity; }
+
+var _Basics_ceiling = Math.ceil;
+var _Basics_floor = Math.floor;
+var _Basics_round = Math.round;
+var _Basics_sqrt = Math.sqrt;
+var _Basics_log = Math.log;
+var _Basics_isNaN = isNaN;
+
+
+// BOOLEANS
+
+function _Basics_not(bool) { return !bool; }
+var _Basics_and = F2(function(a, b) { return a && b; });
+var _Basics_or  = F2(function(a, b) { return a || b; });
+var _Basics_xor = F2(function(a, b) { return a !== b; });
+
+
+
 var _String_cons = F2(function(chr, str)
 {
 	return chr + str;
@@ -1102,66 +1162,6 @@ function _String_fromList(chars)
 	return _List_toArray(chars).join('');
 }
 
-
-
-
-// MATH
-
-var _Basics_add = F2(function(a, b) { return a + b; });
-var _Basics_sub = F2(function(a, b) { return a - b; });
-var _Basics_mul = F2(function(a, b) { return a * b; });
-var _Basics_fdiv = F2(function(a, b) { return a / b; });
-var _Basics_idiv = F2(function(a, b) { return (a / b) | 0; });
-var _Basics_pow = F2(Math.pow);
-
-var _Basics_remainderBy = F2(function(b, a) { return a % b; });
-
-// https://www.microsoft.com/en-us/research/wp-content/uploads/2016/02/divmodnote-letter.pdf
-var _Basics_modBy = F2(function(modulus, x)
-{
-	var answer = x % modulus;
-	return modulus === 0
-		? _Debug_crash(11)
-		:
-	((answer > 0 && modulus < 0) || (answer < 0 && modulus > 0))
-		? answer + modulus
-		: answer;
-});
-
-
-// TRIGONOMETRY
-
-var _Basics_pi = Math.PI;
-var _Basics_e = Math.E;
-var _Basics_cos = Math.cos;
-var _Basics_sin = Math.sin;
-var _Basics_tan = Math.tan;
-var _Basics_acos = Math.acos;
-var _Basics_asin = Math.asin;
-var _Basics_atan = Math.atan;
-var _Basics_atan2 = F2(Math.atan2);
-
-
-// MORE MATH
-
-function _Basics_toFloat(x) { return x; }
-function _Basics_truncate(n) { return n | 0; }
-function _Basics_isInfinite(n) { return n === Infinity || n === -Infinity; }
-
-var _Basics_ceiling = Math.ceil;
-var _Basics_floor = Math.floor;
-var _Basics_round = Math.round;
-var _Basics_sqrt = Math.sqrt;
-var _Basics_log = Math.log;
-var _Basics_isNaN = isNaN;
-
-
-// BOOLEANS
-
-function _Basics_not(bool) { return !bool; }
-var _Basics_and = F2(function(a, b) { return a && b; });
-var _Basics_or  = F2(function(a, b) { return a || b; });
-var _Basics_xor = F2(function(a, b) { return a !== b; });
 
 
 
@@ -4522,7 +4522,7 @@ var _Parser_findSubString = F5(function(smallString, offset, row, col, bigString
 
 	return _Utils_Tuple3(newOffset, row, col);
 });
-var author$project$Calendar2$Week = {$: 'Week'};
+var author$project$Calendar2$Month = {$: 'Month'};
 var author$project$Calendar2$State = function (a) {
 	return {$: 'State', a: a};
 };
@@ -4564,13 +4564,7 @@ var author$project$Calendar2$init = F2(
 				author$project$Calendar2$toInternalTimespan(timeSpan),
 				viewing));
 	});
-var author$project$Fixtures$Event = F4(
-	function (id, title, start, end) {
-		return {end: end, id: id, start: start, title: title};
-	});
-var elm$core$Maybe$Just = function (a) {
-	return {$: 'Just', a: a};
-};
+var elm$time$Time$Oct = {$: 'Oct'};
 var elm$core$Basics$EQ = {$: 'EQ'};
 var elm$core$Basics$LT = {$: 'LT'};
 var elm$core$Elm$JsArray$foldr = _JsArray_foldr;
@@ -4651,58 +4645,11 @@ var elm$core$Set$toList = function (_n0) {
 	var dict = _n0.a;
 	return elm$core$Dict$keys(dict);
 };
-var elm$core$String$fromInt = _String_fromNumber;
 var elm$time$Time$Zone = F2(
 	function (a, b) {
 		return {$: 'Zone', a: a, b: b};
 	});
 var elm$time$Time$utc = A2(elm$time$Time$Zone, 0, _List_Nil);
-var elm$core$Basics$gt = _Utils_gt;
-var elm$core$Basics$max = F2(
-	function (x, y) {
-		return (_Utils_cmp(x, y) > 0) ? x : y;
-	});
-var elm$time$Time$Apr = {$: 'Apr'};
-var elm$time$Time$Aug = {$: 'Aug'};
-var elm$time$Time$Dec = {$: 'Dec'};
-var elm$time$Time$Feb = {$: 'Feb'};
-var elm$time$Time$Jan = {$: 'Jan'};
-var elm$time$Time$Jul = {$: 'Jul'};
-var elm$time$Time$Jun = {$: 'Jun'};
-var elm$time$Time$Mar = {$: 'Mar'};
-var elm$time$Time$May = {$: 'May'};
-var elm$time$Time$Nov = {$: 'Nov'};
-var elm$time$Time$Oct = {$: 'Oct'};
-var elm$time$Time$Sep = {$: 'Sep'};
-var justinmimbs$date$Date$numberToMonth = function (mn) {
-	var _n0 = A2(elm$core$Basics$max, 1, mn);
-	switch (_n0) {
-		case 1:
-			return elm$time$Time$Jan;
-		case 2:
-			return elm$time$Time$Feb;
-		case 3:
-			return elm$time$Time$Mar;
-		case 4:
-			return elm$time$Time$Apr;
-		case 5:
-			return elm$time$Time$May;
-		case 6:
-			return elm$time$Time$Jun;
-		case 7:
-			return elm$time$Time$Jul;
-		case 8:
-			return elm$time$Time$Aug;
-		case 9:
-			return elm$time$Time$Sep;
-		case 10:
-			return elm$time$Time$Oct;
-		case 11:
-			return elm$time$Time$Nov;
-		default:
-			return elm$time$Time$Dec;
-	}
-};
 var justinmimbs$time_extra$Time$Extra$Parts = F7(
 	function (year, month, day, hour, minute, second, millisecond) {
 		return {day: day, hour: hour, millisecond: millisecond, minute: minute, month: month, second: second, year: year};
@@ -4711,6 +4658,7 @@ var elm$core$Basics$apR = F2(
 	function (x, f) {
 		return f(x);
 	});
+var elm$core$Basics$gt = _Utils_gt;
 var elm$core$Basics$lt = _Utils_lt;
 var elm$core$Basics$clamp = F3(
 	function (low, high, number) {
@@ -4892,6 +4840,17 @@ var elm$time$Time$toDay = F2(
 		return elm$time$Time$toCivil(
 			A2(elm$time$Time$toAdjustedMinutes, zone, time)).day;
 	});
+var elm$time$Time$Apr = {$: 'Apr'};
+var elm$time$Time$Aug = {$: 'Aug'};
+var elm$time$Time$Dec = {$: 'Dec'};
+var elm$time$Time$Feb = {$: 'Feb'};
+var elm$time$Time$Jan = {$: 'Jan'};
+var elm$time$Time$Jul = {$: 'Jul'};
+var elm$time$Time$Jun = {$: 'Jun'};
+var elm$time$Time$Mar = {$: 'Mar'};
+var elm$time$Time$May = {$: 'May'};
+var elm$time$Time$Nov = {$: 'Nov'};
+var elm$time$Time$Sep = {$: 'Sep'};
 var elm$time$Time$toMonth = F2(
 	function (zone, time) {
 		var _n0 = elm$time$Time$toCivil(
@@ -5027,6 +4986,119 @@ var justinmimbs$time_extra$Time$Extra$partsToPosix = F2(
 				A3(elm$core$Basics$clamp, 0, 59, second),
 				A3(elm$core$Basics$clamp, 0, 999, millisecond)));
 	});
+var author$project$Fixtures$allday1 = {
+	end: A2(
+		justinmimbs$time_extra$Time$Extra$partsToPosix,
+		elm$time$Time$utc,
+		A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 2, 5, 0, 0, 0)),
+	id: 'all_1',
+	start: A2(
+		justinmimbs$time_extra$Time$Extra$partsToPosix,
+		elm$time$Time$utc,
+		A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 1, 3, 0, 0, 0)),
+	title: 'all_1'
+};
+var author$project$Fixtures$allday2 = {
+	end: A2(
+		justinmimbs$time_extra$Time$Extra$partsToPosix,
+		elm$time$Time$utc,
+		A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 3, 5, 0, 0, 0)),
+	id: 'all_2',
+	start: A2(
+		justinmimbs$time_extra$Time$Extra$partsToPosix,
+		elm$time$Time$utc,
+		A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 2, 3, 0, 0, 0)),
+	title: 'all_2'
+};
+var author$project$Fixtures$allday3 = {
+	end: A2(
+		justinmimbs$time_extra$Time$Extra$partsToPosix,
+		elm$time$Time$utc,
+		A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 16, 5, 0, 0, 0)),
+	id: 'all_3',
+	start: A2(
+		justinmimbs$time_extra$Time$Extra$partsToPosix,
+		elm$time$Time$utc,
+		A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 12, 3, 0, 0, 0)),
+	title: 'all_3'
+};
+var author$project$Fixtures$allday4 = {
+	end: A2(
+		justinmimbs$time_extra$Time$Extra$partsToPosix,
+		elm$time$Time$utc,
+		A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 20, 5, 0, 0, 0)),
+	id: 'all_4',
+	start: A2(
+		justinmimbs$time_extra$Time$Extra$partsToPosix,
+		elm$time$Time$utc,
+		A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 18, 3, 0, 0, 0)),
+	title: 'all_4'
+};
+var author$project$Fixtures$allday5 = {
+	end: A2(
+		justinmimbs$time_extra$Time$Extra$partsToPosix,
+		elm$time$Time$utc,
+		A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 6, 5, 0, 0, 0)),
+	id: 'all_5',
+	start: A2(
+		justinmimbs$time_extra$Time$Extra$partsToPosix,
+		elm$time$Time$utc,
+		A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 5, 3, 0, 0, 0)),
+	title: 'all_5'
+};
+var author$project$Fixtures$allday6 = {
+	end: A2(
+		justinmimbs$time_extra$Time$Extra$partsToPosix,
+		elm$time$Time$utc,
+		A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 9, 5, 0, 0, 0)),
+	id: 'all_6',
+	start: A2(
+		justinmimbs$time_extra$Time$Extra$partsToPosix,
+		elm$time$Time$utc,
+		A7(justinmimbs$time_extra$Time$Extra$Parts, 2020, elm$time$Time$Oct, 8, 3, 0, 0, 0)),
+	title: 'all_6'
+};
+var author$project$Fixtures$Event = F4(
+	function (id, title, start, end) {
+		return {end: end, id: id, start: start, title: title};
+	});
+var elm$core$Maybe$Just = function (a) {
+	return {$: 'Just', a: a};
+};
+var elm$core$String$fromInt = _String_fromNumber;
+var elm$core$Basics$max = F2(
+	function (x, y) {
+		return (_Utils_cmp(x, y) > 0) ? x : y;
+	});
+var justinmimbs$date$Date$numberToMonth = function (mn) {
+	var _n0 = A2(elm$core$Basics$max, 1, mn);
+	switch (_n0) {
+		case 1:
+			return elm$time$Time$Jan;
+		case 2:
+			return elm$time$Time$Feb;
+		case 3:
+			return elm$time$Time$Mar;
+		case 4:
+			return elm$time$Time$Apr;
+		case 5:
+			return elm$time$Time$May;
+		case 6:
+			return elm$time$Time$Jun;
+		case 7:
+			return elm$time$Time$Jul;
+		case 8:
+			return elm$time$Time$Aug;
+		case 9:
+			return elm$time$Time$Sep;
+		case 10:
+			return elm$time$Time$Oct;
+		case 11:
+			return elm$time$Time$Nov;
+		default:
+			return elm$time$Time$Dec;
+	}
+};
 var author$project$Fixtures$evt = F9(
 	function (id, title, yyyy, mm, dd, shh, smm, ehh, emm) {
 		var start_ = A2(
@@ -5068,6 +5140,13 @@ var author$project$Fixtures$e09 = A9(author$project$Fixtures$evt, 9, 'id 9', 202
 var author$project$Fixtures$e10 = A9(author$project$Fixtures$evt, 10, 'id 10', 2020, 10, 10, 3, 0, 5, 0);
 var author$project$Fixtures$e11 = A9(author$project$Fixtures$evt, 11, 'id 11', 2020, 10, 11, 3, 0, 5, 0);
 var author$project$Fixtures$e12 = A9(author$project$Fixtures$evt, 12, 'id 12', 2020, 10, 12, 3, 0, 5, 0);
+var author$project$Fixtures$e122 = A9(author$project$Fixtures$evt, 122, 'id 122', 2020, 10, 22, 6, 0, 7, 0);
+var author$project$Fixtures$e123 = A9(author$project$Fixtures$evt, 123, 'id 123', 2020, 10, 23, 6, 0, 7, 0);
+var author$project$Fixtures$e124 = A9(author$project$Fixtures$evt, 124, 'id 124', 2020, 10, 24, 6, 0, 7, 0);
+var author$project$Fixtures$e125 = A9(author$project$Fixtures$evt, 125, 'id 125', 2020, 10, 25, 6, 0, 7, 0);
+var author$project$Fixtures$e126 = A9(author$project$Fixtures$evt, 126, 'id 126', 2020, 10, 26, 6, 0, 7, 0);
+var author$project$Fixtures$e127 = A9(author$project$Fixtures$evt, 127, 'id 127', 2020, 10, 27, 6, 0, 7, 0);
+var author$project$Fixtures$e128 = A9(author$project$Fixtures$evt, 128, 'id 128', 2020, 10, 28, 6, 0, 7, 0);
 var author$project$Fixtures$e13 = A9(author$project$Fixtures$evt, 13, 'id 13', 2020, 10, 13, 3, 0, 5, 0);
 var author$project$Fixtures$e14 = A9(author$project$Fixtures$evt, 14, 'id 14', 2020, 10, 14, 3, 0, 5, 0);
 var author$project$Fixtures$e15 = A9(author$project$Fixtures$evt, 15, 'id 15', 2020, 10, 15, 3, 0, 5, 0);
@@ -5088,7 +5167,7 @@ var author$project$Fixtures$e29 = A9(author$project$Fixtures$evt, 29, 'id 29', 2
 var author$project$Fixtures$e30 = A9(author$project$Fixtures$evt, 30, 'id 30', 2020, 10, 30, 3, 0, 5, 0);
 var author$project$Fixtures$e31 = A9(author$project$Fixtures$evt, 31, 'id 31', 2020, 10, 31, 3, 0, 5, 0);
 var author$project$Fixtures$events = _List_fromArray(
-	[author$project$Fixtures$e01, author$project$Fixtures$e02, author$project$Fixtures$e03, author$project$Fixtures$e04, author$project$Fixtures$e05, author$project$Fixtures$e06, author$project$Fixtures$e07, author$project$Fixtures$e08, author$project$Fixtures$e09, author$project$Fixtures$e10, author$project$Fixtures$e11, author$project$Fixtures$e12, author$project$Fixtures$e13, author$project$Fixtures$e14, author$project$Fixtures$e15, author$project$Fixtures$e16, author$project$Fixtures$e17, author$project$Fixtures$e18, author$project$Fixtures$e19, author$project$Fixtures$e20, author$project$Fixtures$e21, author$project$Fixtures$e22, author$project$Fixtures$e23, author$project$Fixtures$e24, author$project$Fixtures$e25, author$project$Fixtures$e26, author$project$Fixtures$e27, author$project$Fixtures$e28, author$project$Fixtures$e29, author$project$Fixtures$e30, author$project$Fixtures$e31]);
+	[author$project$Fixtures$e01, author$project$Fixtures$e02, author$project$Fixtures$e03, author$project$Fixtures$e04, author$project$Fixtures$e05, author$project$Fixtures$e06, author$project$Fixtures$e07, author$project$Fixtures$e08, author$project$Fixtures$e09, author$project$Fixtures$e10, author$project$Fixtures$e11, author$project$Fixtures$e12, author$project$Fixtures$e13, author$project$Fixtures$e14, author$project$Fixtures$e15, author$project$Fixtures$e16, author$project$Fixtures$e17, author$project$Fixtures$e18, author$project$Fixtures$e19, author$project$Fixtures$e20, author$project$Fixtures$e21, author$project$Fixtures$e22, author$project$Fixtures$e23, author$project$Fixtures$e24, author$project$Fixtures$e25, author$project$Fixtures$e26, author$project$Fixtures$e27, author$project$Fixtures$e28, author$project$Fixtures$e122, author$project$Fixtures$e123, author$project$Fixtures$e124, author$project$Fixtures$e125, author$project$Fixtures$e126, author$project$Fixtures$e127, author$project$Fixtures$e128, author$project$Fixtures$e29, author$project$Fixtures$e30, author$project$Fixtures$e31, author$project$Fixtures$allday1, author$project$Fixtures$allday2, author$project$Fixtures$allday3, author$project$Fixtures$allday4, author$project$Fixtures$allday5, author$project$Fixtures$allday6]);
 var author$project$Fixtures$viewing = A2(
 	justinmimbs$time_extra$Time$Extra$partsToPosix,
 	elm$time$Time$utc,
@@ -5355,7 +5434,7 @@ var elm$core$Maybe$withDefault = F2(
 	});
 var elm$core$String$toInt = _String_toInt;
 var author$project$Main$base_model = {
-	calendarState: A2(author$project$Calendar2$init, author$project$Calendar2$Week, author$project$Fixtures$viewing),
+	calendarState: A2(author$project$Calendar2$init, author$project$Calendar2$Month, author$project$Fixtures$viewing),
 	curEventId: elm$core$String$fromInt(
 		A2(
 			elm$core$Maybe$withDefault,
@@ -10950,7 +11029,15 @@ var author$project$Calendar2$Month$viewMonthRowBackground = function (week) {
 };
 var author$project$Calendar2$Event$cellWidth = 100.0 / 7;
 var author$project$Calendar2$Event$offsetLength = function (date) {
-	return author$project$Calendar2$Event$cellWidth * justinmimbs$date$Date$weekdayNumber(date);
+	var w = justinmimbs$date$Date$weekdayNumber(date);
+	var parsent = function () {
+		if (w === 7) {
+			return 0;
+		} else {
+			return w;
+		}
+	}();
+	return author$project$Calendar2$Event$cellWidth * parsent;
 };
 var author$project$Calendar2$Event$offsetPercentage = function (date) {
 	return elm$core$String$fromFloat(
@@ -11005,7 +11092,7 @@ var author$project$Calendar2$Event$viewMonthEvent = F4(
 		var numDaysThisWeek = function () {
 			switch (eventRange.$) {
 				case 'StartsAndEnds':
-					return A3(justinmimbs$date$Date$diff, justinmimbs$date$Date$Days, eventStart, eventEnd) + 2;
+					return A3(justinmimbs$date$Date$diff, justinmimbs$date$Date$Days, eventStart, eventEnd) + 1;
 				case 'ContinuesAfter':
 					return (7 - justinmimbs$date$Date$weekdayNumber(eventStart)) + 1;
 				case 'ContinuesPrior':
@@ -11067,11 +11154,16 @@ var author$project$Calendar2$Event$maybeViewMonthEvent = F4(
 var justinmimbs$time_extra$Time$Extra$Sunday = {$: 'Sunday'};
 var author$project$Calendar2$Event$rangeDescriptionFromMonth = F4(
 	function (start, end, interval, posix) {
-		var endInterval = A3(
-			justinmimbs$time_extra$Time$Extra$floor,
-			justinmimbs$time_extra$Time$Extra$Sunday,
+		var endInterval = A4(
+			justinmimbs$time_extra$Time$Extra$add,
+			justinmimbs$time_extra$Time$Extra$Millisecond,
+			-1,
 			elm$time$Time$utc,
-			A4(justinmimbs$time_extra$Time$Extra$add, justinmimbs$time_extra$Time$Extra$Sunday, 1, elm$time$Time$utc, posix));
+			A3(
+				justinmimbs$time_extra$Time$Extra$floor,
+				justinmimbs$time_extra$Time$Extra$Sunday,
+				elm$time$Time$utc,
+				A4(justinmimbs$time_extra$Time$Extra$add, justinmimbs$time_extra$Time$Extra$Sunday, 1, elm$time$Time$utc, posix)));
 		var endsAfterInterval = A2(author$project$Calendar2$Event$isAfter, endInterval, end);
 		var begInterval = A3(justinmimbs$time_extra$Time$Extra$floor, justinmimbs$time_extra$Time$Extra$Sunday, elm$time$Time$utc, posix);
 		var endsThisInterval = A3(author$project$Calendar2$Event$isBetween, begInterval, endInterval, end);
@@ -11233,11 +11325,33 @@ var author$project$Calendar2$Month$viewMonthRowContent = F4(
 	function (config, events, selectedId, week) {
 		var eventRows = A2(
 			elm$core$List$take,
-			7,
+			11,
 			A2(
 				elm$core$List$filterMap,
 				A3(author$project$Calendar2$Month$viewWeekEvent, config, week, selectedId),
 				events));
+		var eventCell = function (posix) {
+			return A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('elm-calendar--date-cell')
+					]),
+				_List_fromArray(
+					[
+						elm$html$Html$text(
+						elm$core$String$fromInt(
+							100 + justinmimbs$date$Date$day(
+								A2(justinmimbs$date$Date$fromPosix, elm$time$Time$utc, posix))))
+					]));
+		};
+		var eventDay = A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('elm-calendar--row')
+				]),
+			A2(elm$core$List$map, eventCell, week));
 		var dateCell = function (posix) {
 			return A2(
 				elm$html$Html$div,
@@ -11266,7 +11380,13 @@ var author$project$Calendar2$Month$viewMonthRowContent = F4(
 				[
 					elm$html$Html$Attributes$class('elm-calendar--month-week')
 				]),
-			A2(elm$core$List$cons, datesRow, eventRows));
+			A2(
+				elm$core$List$cons,
+				datesRow,
+				_Utils_ap(
+					eventRows,
+					_List_fromArray(
+						[eventDay]))));
 	});
 var author$project$Calendar2$Month$viewMonthRow = F4(
 	function (config, events, selectedId, week) {

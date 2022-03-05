@@ -123,27 +123,10 @@ viewMonthRowContent config events selectedId week =
 
         eventRows =
             List.filterMap (viewWeekEvent config week selectedId) events
-                |> List.take 11 --GUSA 7  week-row  縦数
-------------------
-        eventCell posix =
-            div ([ class "elm-calendar--date-cell" ]
-                )
-                [ Date.fromPosix Time.utc posix
-                    |> Date.day
-                    |> (+) 100
-                    |> String.fromInt
-                    |> text
-                ]
-
-        eventDay =
-            div [ class "elm-calendar--row" ] (List.map eventCell week)
-------------------
-
+                |> List.take 1 --GUSA 7
     in
         div [ class "elm-calendar--month-week" ]
-            --(datesRow :: eventRows)
-            --(datesRow :: eventRows ++ [datesRow])
-            (datesRow :: eventRows ++ [eventDay])
+            (datesRow :: eventRows)
 
 
 -- viewWeekEvent : ViewConfig event -> List Date -> Maybe String -> event -> Maybe (Html Msg)

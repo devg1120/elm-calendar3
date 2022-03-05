@@ -137,6 +137,7 @@ eventConfig =
         , onDragStart = \_ -> Nothing
         , onDragging = \_ _ -> Nothing
         , onDragEnd = \_ _ -> Nothing
+        , onEventMove = \_ _ -> Nothing
         }
 
 

@@ -62,7 +62,8 @@ type alias EventPreview =
 
 base_model : Model
 base_model =
-     { calendarState = Calendar2.init Calendar2.Week Fixtures.viewing
+     --{ calendarState = Calendar2.init Calendar2.Week Fixtures.viewing
+     { calendarState = Calendar2.init Calendar2.Month Fixtures.viewing
       , events =
             Fixtures.events
                 |> List.map (\event -> ( event.id, event ))
