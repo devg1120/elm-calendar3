@@ -271,16 +271,37 @@ eventStyling config event eventRange timeSpan customClasses =
         -- [ classList (( classes, True ) :: customClasses),  styles ]
         [ classList (( classes, True ) :: customClasses)] ++   styles -- GUSA
 
-
+{--
 maybeViewMonthEvent : ViewConfig event -> event -> Maybe String -> EventRange -> Maybe (Html Msg)
 maybeViewMonthEvent config event selectedId eventRange =
-    -- let _ = Debug.log "maybeViewMonthEvent:" eventRange in
     case eventRange of
         ExistsOutside ->
             Nothing
 
         _ ->
             Just <| viewMonthEvent config event selectedId eventRange
+            --}
+maybeViewMonthEvent : ViewConfig event -> event -> Maybe String -> EventRange -> Maybe (Html Msg)
+maybeViewMonthEvent config event selectedId eventRange =
+    let
+        eventStart =
+            Date.fromPosix Time.utc (config.start event)
+        eventEnd =
+            Date.fromPosix Time.utc (config.end event)
+
+        date_cmp = Date.compare eventStart eventEnd
+
+    in
+    case eventRange of
+        ExistsOutside ->
+            Nothing
+
+        _ ->
+            case date_cmp of
+                    EQ ->
+                        Nothing
+                    _ ->
+                        Just <| viewMonthEvent config event selectedId eventRange
 
 weekdayNumber : Time.Posix -> Int
 weekdayNumber posix =

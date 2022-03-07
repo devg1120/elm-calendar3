@@ -11027,6 +11027,85 @@ var author$project$Calendar2$Month$viewMonthRowBackground = function (week) {
 			},
 			week));
 };
+var author$project$Calendar2$Month$eventStyling = F4(
+	function (config, event, eventRange, customClasses) {
+		var eventStart = config.start(event);
+		var eventEnd = config.end(event);
+		var styles = A2(author$project$Calendar2$Event$styleDayEvent, eventStart, eventEnd);
+		var classes = function () {
+			switch (eventRange.$) {
+				case 'StartsAndEnds':
+					return 'elm-calendar--event elm-calendar--event-starts-and-ends';
+				case 'ContinuesAfter':
+					return 'elm-calendar--event elm-calendar--event-continues-after';
+				case 'ContinuesPrior':
+					return 'elm-calendar--event elm-calendar--event-continues-prior';
+				case 'ContinuesAfterAndPrior':
+					return 'elm-calendar--event';
+				default:
+					return '';
+			}
+		}();
+		return _List_fromArray(
+			[
+				elm$html$Html$Attributes$classList(
+				A2(
+					elm$core$List$cons,
+					_Utils_Tuple2(classes, true),
+					customClasses))
+			]);
+	});
+var author$project$Calendar2$Month$eventSegment = F4(
+	function (config, event, selectedId, eventRange) {
+		var eventId = config.toId(event);
+		var isSelected = A2(
+			elm$core$Maybe$withDefault,
+			false,
+			A2(
+				elm$core$Maybe$map,
+				elm$core$Basics$eq(eventId),
+				selectedId));
+		var _n0 = A2(config.event, event, isSelected);
+		var nodeName = _n0.nodeName;
+		var classes = _n0.classes;
+		var children = _n0.children;
+		return A3(
+			elm$html$Html$node,
+			nodeName,
+			_Utils_ap(
+				_List_fromArray(
+					[
+						elm$html$Html$Events$onClick(
+						author$project$Calendar2$Msg$EventClick(eventId))
+					]),
+				_Utils_ap(
+					A2(norpan$elm_html5_drag_drop$Html5$DragDrop$draggable, author$project$Calendar2$Msg$DragDropMsg, eventId),
+					A4(author$project$Calendar2$Month$eventStyling, config, event, eventRange, classes))),
+			children);
+	});
+var author$project$Calendar2$Month$maybeViewDayEvent = F4(
+	function (config, event, selectedId, eventRange) {
+		if (eventRange.$ === 'StartsAndEnds') {
+			return elm$core$Maybe$Just(
+				A4(author$project$Calendar2$Month$eventSegment, config, event, selectedId, eventRange));
+		} else {
+			return elm$core$Maybe$Nothing;
+		}
+	});
+var author$project$Calendar2$Month$viewDayEvent = F4(
+	function (config, day, selectedId, event) {
+		var eventStart = config.start(event);
+		var eventEnd = config.end(event);
+		var eventRange = A4(author$project$Calendar2$Event$rangeDescriptionFromDay, eventStart, eventEnd, justinmimbs$time_extra$Time$Extra$Day, day);
+		return A4(author$project$Calendar2$Month$maybeViewDayEvent, config, event, selectedId, eventRange);
+	});
+var author$project$Calendar2$Month$viewDayEvents = F4(
+	function (config, events, selectedId, day) {
+		return A2(
+			elm$core$List$filterMap,
+			A3(author$project$Calendar2$Month$viewDayEvent, config, day, selectedId),
+			events);
+	});
 var author$project$Calendar2$Event$cellWidth = 100.0 / 7;
 var author$project$Calendar2$Event$offsetLength = function (date) {
 	var w = justinmimbs$date$Date$weekdayNumber(date);
@@ -11142,13 +11221,32 @@ var author$project$Calendar2$Event$viewMonthEvent = F4(
 						]))
 				]));
 	});
+var justinmimbs$date$Date$compare = F2(
+	function (_n0, _n1) {
+		var a = _n0.a;
+		var b = _n1.a;
+		return A2(elm$core$Basics$compare, a, b);
+	});
 var author$project$Calendar2$Event$maybeViewMonthEvent = F4(
 	function (config, event, selectedId, eventRange) {
+		var eventStart = A2(
+			justinmimbs$date$Date$fromPosix,
+			elm$time$Time$utc,
+			config.start(event));
+		var eventEnd = A2(
+			justinmimbs$date$Date$fromPosix,
+			elm$time$Time$utc,
+			config.end(event));
+		var date_cmp = A2(justinmimbs$date$Date$compare, eventStart, eventEnd);
 		if (eventRange.$ === 'ExistsOutside') {
 			return elm$core$Maybe$Nothing;
 		} else {
-			return elm$core$Maybe$Just(
-				A4(author$project$Calendar2$Event$viewMonthEvent, config, event, selectedId, eventRange));
+			if (date_cmp.$ === 'EQ') {
+				return elm$core$Maybe$Nothing;
+			} else {
+				return elm$core$Maybe$Just(
+					A4(author$project$Calendar2$Event$viewMonthEvent, config, event, selectedId, eventRange));
+			}
 		}
 	});
 var justinmimbs$time_extra$Time$Extra$Sunday = {$: 'Sunday'};
@@ -11352,6 +11450,26 @@ var author$project$Calendar2$Month$viewMonthRowContent = F4(
 					elm$html$Html$Attributes$class('elm-calendar--row')
 				]),
 			A2(elm$core$List$map, eventCell, week));
+		var dayEvents = function (posix) {
+			return A4(author$project$Calendar2$Month$viewDayEvents, config, events, selectedId, posix);
+		};
+		var eventCell2 = function (posix) {
+			var ev = dayEvents(posix);
+			return A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('elm-calendar--date-cell')
+					]),
+				dayEvents(posix));
+		};
+		var eventDay2 = A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('elm-calendar--row')
+				]),
+			A2(elm$core$List$map, eventCell2, week));
 		var dateCell = function (posix) {
 			return A2(
 				elm$html$Html$div,
@@ -11385,8 +11503,11 @@ var author$project$Calendar2$Month$viewMonthRowContent = F4(
 				datesRow,
 				_Utils_ap(
 					eventRows,
-					_List_fromArray(
-						[eventDay]))));
+					_Utils_ap(
+						_List_fromArray(
+							[eventDay]),
+						_List_fromArray(
+							[eventDay2])))));
 	});
 var author$project$Calendar2$Month$viewMonthRow = F4(
 	function (config, events, selectedId, week) {
