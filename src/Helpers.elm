@@ -96,3 +96,4 @@ dayRangeOfWeek posix =
          Time.utc
          (Time.Extra.floor  Time.Extra.Sunday Time.utc posix)
          (Time.Extra.ceiling Time.Extra.Sunday Time.utc posix)
+         --(Time.Extra.ceiling Time.Extra.Month Time.utc posix)

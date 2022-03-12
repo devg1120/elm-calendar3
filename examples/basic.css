@@ -71,6 +71,9 @@
   display: flex;
 }
 
+.elm-calendar--row2 {
+  display: flex;
+}
 .elm-calendar--month-week {
   position: relative;
   z-index: 4;
@@ -112,6 +115,14 @@
   border: 1px solid #DDD;
 }
 
+.elm-calendar--week-allday {
+  display: flex;
+  min-height: 60px;
+}
+.week-allday {
+  /*display: flex;*/
+  flex-basis: 91.5%;
+}
 .elm-calendar--week-content {
   display: flex;
   border-top: 2px solid #DDD;

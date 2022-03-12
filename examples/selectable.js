@@ -11637,19 +11637,7 @@ var author$project$Calendar2$Week$viewWeekContent = F5(
 				]),
 			A2(elm$core$List$cons, timeGutter, weekDays));
 	});
-var author$project$Calendar2$Week$viewDates = function (days) {
-	return A2(
-		elm$html$Html$div,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('elm-calendar--dates')
-			]),
-		A2(
-			elm$core$List$cons,
-			author$project$Calendar2$Day$viewTimeGutterHeader,
-			A2(elm$core$List$map, author$project$Calendar2$Day$viewDate, days)));
-};
-var author$project$Calendar2$Week$viewWeekHeader = F4(
+var author$project$Calendar2$Week$viewAllDayCell3 = F4(
 	function (config, events, selectedId, days) {
 		var viewAllDayText = A2(
 			elm$html$Html$div,
@@ -11668,19 +11656,70 @@ var author$project$Calendar2$Week$viewWeekHeader = F4(
 				elm$core$List$filterMap,
 				A3(author$project$Calendar2$Month$viewWeekEvent, config, days, selectedId),
 				events));
+		var viewAllDay = function (day) {
+			return A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						elm$html$Html$Attributes$class('elm-calendar--all-day')
+					]),
+				eventRows);
+		};
+		return A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('elm-calendar--week-allday')
+				]),
+			_List_fromArray(
+				[
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('elm-calendar--time-gutter')
+						]),
+					_List_fromArray(
+						[
+							elm$html$Html$text('A')
+						])),
+					A2(
+					elm$html$Html$div,
+					_List_fromArray(
+						[
+							elm$html$Html$Attributes$class('week-allday')
+						]),
+					_List_fromArray(
+						[
+							A2(elm$html$Html$div, _List_Nil, eventRows)
+						]))
+				]));
+	});
+var author$project$Calendar2$Week$viewDates = function (days) {
+	return A2(
+		elm$html$Html$div,
+		_List_fromArray(
+			[
+				elm$html$Html$Attributes$class('elm-calendar--dates')
+			]),
+		A2(
+			elm$core$List$cons,
+			author$project$Calendar2$Day$viewTimeGutterHeader,
+			A2(elm$core$List$map, author$project$Calendar2$Day$viewDate, days)));
+};
+var author$project$Calendar2$Week$viewWeekHeader = F4(
+	function (config, events, selectedId, days) {
 		return A2(
 			elm$html$Html$div,
 			_List_fromArray(
 				[
 					elm$html$Html$Attributes$class('elm-calendar--week-header')
 				]),
-			A2(
-				elm$core$List$cons,
-				author$project$Calendar2$Week$viewDates(days),
-				A2(
-					elm$core$List$cons,
-					viewAllDayText,
-					A2(elm$core$List$cons, author$project$Calendar2$Day$viewTimeGutterHeader, eventRows))));
+			_List_fromArray(
+				[
+					author$project$Calendar2$Week$viewDates(days),
+					A4(author$project$Calendar2$Week$viewAllDayCell3, config, events, selectedId, days)
+				]));
 	});
 var author$project$Helpers$dayRangeOfWeek = function (posix) {
 	return A5(
