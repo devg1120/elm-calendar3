@@ -466,6 +466,7 @@ styleDayEvent start end =
             , style "position"   "absolute"
             ]
 
+                {--
 maybeViewDayEvent : ViewConfig event -> event -> Maybe String -> EventRange -> Maybe (Html Msg)
 maybeViewDayEvent config event selectedId eventRange =
     case eventRange of
@@ -474,7 +475,16 @@ maybeViewDayEvent config event selectedId eventRange =
 
         _ ->
             Just <| eventSegment config event selectedId eventRange Day
+            --}
 
+maybeViewDayEvent : ViewConfig event -> event -> Maybe String -> EventRange -> Maybe (Html Msg)
+maybeViewDayEvent config event selectedId eventRange =
+    case eventRange of
+        StartsAndEnds ->
+            Just <| eventSegment config event selectedId eventRange Day
+
+        _ ->
+            Nothing
 
 eventSegment : ViewConfig event -> event -> Maybe String -> EventRange -> TimeSpan -> Html Msg
 eventSegment config event selectedId eventRange timeSpan =

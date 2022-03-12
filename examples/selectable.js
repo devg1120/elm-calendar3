@@ -10003,11 +10003,11 @@ var author$project$Calendar2$Event$eventSegment = F5(
 	});
 var author$project$Calendar2$Event$maybeViewDayEvent = F4(
 	function (config, event, selectedId, eventRange) {
-		if (eventRange.$ === 'ExistsOutside') {
-			return elm$core$Maybe$Nothing;
-		} else {
+		if (eventRange.$ === 'StartsAndEnds') {
 			return elm$core$Maybe$Just(
 				A5(author$project$Calendar2$Event$eventSegment, config, event, selectedId, eventRange, author$project$Calendar2$Msg$Day));
+		} else {
+			return elm$core$Maybe$Nothing;
 		}
 	});
 var author$project$Calendar2$Event$ContinuesAfter = {$: 'ContinuesAfter'};
@@ -11637,37 +11637,6 @@ var author$project$Calendar2$Week$viewWeekContent = F5(
 				]),
 			A2(elm$core$List$cons, timeGutter, weekDays));
 	});
-var author$project$Calendar2$Day$viewAllDayCell = function (days) {
-	var viewAllDayText = A2(
-		elm$html$Html$div,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('elm-calendar--all-day-text')
-			]),
-		_List_fromArray(
-			[
-				elm$html$Html$text('All day')
-			]));
-	var viewAllDay = function (day) {
-		return A2(
-			elm$html$Html$div,
-			_List_fromArray(
-				[
-					elm$html$Html$Attributes$class('elm-calendar--all-day')
-				]),
-			_List_Nil);
-	};
-	return A2(
-		elm$html$Html$div,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('elm-calendar--all-day-cell')
-			]),
-		A2(
-			elm$core$List$cons,
-			viewAllDayText,
-			A2(elm$core$List$map, viewAllDay, days)));
-};
 var author$project$Calendar2$Week$viewDates = function (days) {
 	return A2(
 		elm$html$Html$div,
@@ -11680,19 +11649,39 @@ var author$project$Calendar2$Week$viewDates = function (days) {
 			author$project$Calendar2$Day$viewTimeGutterHeader,
 			A2(elm$core$List$map, author$project$Calendar2$Day$viewDate, days)));
 };
-var author$project$Calendar2$Week$viewWeekHeader = function (days) {
-	return A2(
-		elm$html$Html$div,
-		_List_fromArray(
-			[
-				elm$html$Html$Attributes$class('elm-calendar--week-header')
-			]),
-		_List_fromArray(
-			[
+var author$project$Calendar2$Week$viewWeekHeader = F4(
+	function (config, events, selectedId, days) {
+		var viewAllDayText = A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('elm-calendar--all-day-text')
+				]),
+			_List_fromArray(
+				[
+					elm$html$Html$text('2Allday')
+				]));
+		var eventRows = A2(
+			elm$core$List$take,
+			11,
+			A2(
+				elm$core$List$filterMap,
+				A3(author$project$Calendar2$Month$viewWeekEvent, config, days, selectedId),
+				events));
+		return A2(
+			elm$html$Html$div,
+			_List_fromArray(
+				[
+					elm$html$Html$Attributes$class('elm-calendar--week-header')
+				]),
+			A2(
+				elm$core$List$cons,
 				author$project$Calendar2$Week$viewDates(days),
-				author$project$Calendar2$Day$viewAllDayCell(days)
-			]));
-};
+				A2(
+					elm$core$List$cons,
+					viewAllDayText,
+					A2(elm$core$List$cons, author$project$Calendar2$Day$viewTimeGutterHeader, eventRows))));
+	});
 var author$project$Helpers$dayRangeOfWeek = function (posix) {
 	return A5(
 		justinmimbs$time_extra$Time$Extra$range,
@@ -11713,7 +11702,7 @@ var author$project$Calendar2$Week$view = F4(
 				]),
 			_List_fromArray(
 				[
-					author$project$Calendar2$Week$viewWeekHeader(weekRange),
+					A4(author$project$Calendar2$Week$viewWeekHeader, config, events, selectedId, weekRange),
 					A5(author$project$Calendar2$Week$viewWeekContent, config, events, selectedId, viewing, weekRange)
 				]));
 	});

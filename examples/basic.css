@@ -53,6 +53,7 @@
   padding-right: 5px;
   text-align: right;
   max-width: 14.285%;
+  min-height: 100px;   /*GUSA*/
   flex-basis: 14.285%;
 }
 

@@ -6,7 +6,9 @@ import Html.Attributes exposing (..)
 import Date
 import Time
 import Time.Extra
-import Calendar2.Day exposing (viewTimeGutter, viewTimeGutterHeader, viewDate, viewDaySlotGroup, viewAllDayCell, viewDayEvents)
+--import Calendar2.Day exposing (viewTimeGutter, viewTimeGutterHeader, viewDate, viewDaySlotGroup, viewAllDayCell, viewDayEvents)
+import Calendar2.Day exposing (viewTimeGutter, viewTimeGutterHeader, viewDate, viewDaySlotGroup, viewDayEvents)
+import Calendar2.Month exposing (viewWeekEvent)
 import Calendar2.Msg exposing (Msg)
 import Config exposing (ViewConfig)
 import Helpers
@@ -55,18 +57,55 @@ view config events selectedId viewing =
             --Helpers.dayRangeOfWeek v2
     in
         div [ class "elm-calendar--week" ]
-            [ viewWeekHeader weekRange
+            --[ viewWeekHeader weekRange
+            [ viewWeekHeader config events selectedId weekRange
             , viewWeekContent config events selectedId viewing weekRange
             ]
 
+--viewAllDayCell2 : List Time.Posix -> Html Msg
+viewAllDayCell2 : ViewConfig event -> List event -> Maybe String -> List Time.Posix -> Html Msg
+viewAllDayCell2 config events selectedId days =
+    let
+        viewAllDayText =
+            div [ class "elm-calendar--all-day-text" ] [ text "2Allday" ]
 
-viewWeekHeader : List Time.Posix -> Html Msg
-viewWeekHeader days =
+        eventRows =
+            --List.filterMap (viewWeekEvent config week selectedId) events
+            List.filterMap (viewWeekEvent config days selectedId) events
+                |> List.take 11 --GUSA 7  week-row  縦数
+
+        viewAllDay day =
+            div [ class "elm-calendar--all-day" ]
+                []
+    in
+        div [ class "elm-calendar--all-day-cell" ]
+            --(viewAllDayText :: List.map viewAllDay days)
+            (viewAllDayText :: eventRows)
+
+--viewWeekHeader : List Time.Posix -> Html Msg
+viewWeekHeader :  ViewConfig event -> List event -> Maybe String -> List Time.Posix -> Html Msg
+viewWeekHeader config events selectedId days =
+    let
+       viewAllDayText =
+            div [ class "elm-calendar--all-day-text" ] [ text "2Allday" ]
+       eventRows =
+            --List.filterMap (viewWeekEvent config week selectedId) events
+            List.filterMap (viewWeekEvent config days selectedId) events
+                |> List.take 11 --GUSA 7  week-row  縦数
+    in
+    div [ class "elm-calendar--week-header" ]
+        ( viewDates days :: viewAllDayText :: (viewTimeGutterHeader :: eventRows ))
+
+        {--
+--viewWeekHeader : List Time.Posix -> Html Msg
+viewWeekHeader :  ViewConfig event -> List event -> Maybe String -> List Time.Posix -> Html Msg
+viewWeekHeader config events selectedId days =
     div [ class "elm-calendar--week-header" ]
         [ viewDates days
-        , viewAllDayCell days
+        --, viewAllDayCell2 days
+        , viewAllDayCell2 config events selectedId days
         ]
-
+        --}
 
 viewDates : List Time.Posix -> Html Msg
 viewDates days =

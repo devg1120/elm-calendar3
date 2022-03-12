@@ -158,7 +158,7 @@ viewDayEvent config day selectedId event =
     in
         Event.maybeViewDayEvent config event selectedId eventRange
 
-
+          {--
 viewAllDayCell : List Time.Posix -> Html Msg
 viewAllDayCell days =
     let
@@ -171,3 +171,4 @@ viewAllDayCell days =
     in
         div [ class "elm-calendar--all-day-cell" ]
             (viewAllDayText :: List.map viewAllDay days)
+            --}
