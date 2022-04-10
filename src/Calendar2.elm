@@ -17,6 +17,7 @@ module Calendar2
         , timeSlotConfig
         , TimeSlotConfig
         , subscriptions
+        , getts
         )
 
 {-|
@@ -54,6 +55,12 @@ init : TimeSpan -> Time.Posix -> State
 init timeSpan viewing =
     State <| Internal.init (toInternalTimespan timeSpan) viewing
 
+getts : State -> TimeSpan
+getts state =
+        case state of
+                State state_ ->
+                    fromInternalTimespan state_.timeSpan
+        
 
 {-| I won't tell you what's in here
 -}
@@ -247,3 +254,19 @@ toInternalTimespan timeSpan =
 
         Agenda ->
             InternalMsg.Agenda
+
+fromInternalTimespan :  InternalMsg.TimeSpan ->TimeSpan
+fromInternalTimespan timeSpan =
+    case timeSpan of
+            InternalMsg.Month ->
+                    Month
+
+            InternalMsg.Week ->
+                    Week
+
+            InternalMsg.Day ->
+                    Day
+
+            InternalMsg.Agenda ->
+                    Agenda
+

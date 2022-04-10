@@ -7,15 +7,11 @@ import Html.Events exposing (onInput, onClick)
 import Html.Events.Extra.Mouse as Mouse
 
 import Calendar2
---import Date exposing (Date)
 import Date 
---import Date.Extra
 import Fixtures
 import Dict exposing (Dict)
---import Time exposing (Time)
 import Time 
 import Time.Extra
---import Mouse
 import String
 import Keyboard
 import Browser.Events
@@ -23,7 +19,6 @@ import Html.Events.Extra.Mouse
 
 
 main =
-    --Html.program
     Browser.element
         { init = init
         , update = update
@@ -43,7 +38,6 @@ subscriptions model_ =
 type alias Model =
     { calendarState : Calendar2.State
     , events : Dict String Event
-    --, eventExtendAmount : Time
     , eventExtendAmount : Time.Posix
     , eventPreview : Maybe EventPreview
     , curEventId : String
@@ -54,25 +48,22 @@ type alias Model =
 type alias Event =
     { id : String
     , title : String
-    --, start : Date.Date
     , start : Time.Posix
-    --, end : Date.Date
     , end : Time.Posix
     }
 
 
 type alias EventPreview =
     { event : Event
-    --, position : Mouse.Position
-    --, position : (Float, Float)
     , position : Mouse.Event
     , showDialog : Bool
     }
 
 
-model : Model
-model =
-     { calendarState = Calendar2.init Calendar2.Week Fixtures.viewing
+base_model : Model
+base_model =
+     --{ calendarState = Calendar2.init Calendar2.Week Fixtures.viewing
+     { calendarState = Calendar2.init Calendar2.Month Fixtures.viewing
       , events =
             Fixtures.events
                 |> List.map (\event -> ( event.id, event ))
@@ -96,26 +87,7 @@ model =
 
 init : () -> ( Model, Cmd Msg )
 init _ =
-      ( model
-        {--
-    ( { calendarState = Calendar2.init Calendar2.Week Fixtures.viewing
-      , events =
-            Fixtures.events
-                |> List.map (\event -> ( event.id, event ))
-                |> Dict.fromList
-      , eventExtendAmount = 0
-      , eventPreview = Nothing
-      , curEventId =
-            Fixtures.events
-                |> List.map (Result.withDefault 0 << String.toInt << .id)
-                |> List.sortWith flippedComparison
-                |> List.head
-                |> Maybe.withDefault (List.length Fixtures.events)
-               -- |> toString
-                |> String.fromInt
-      , selectedEvent = Nothing
-      }
-      --}
+      ( base_model
     , Cmd.none
     )
 
@@ -124,15 +96,10 @@ type Msg
     = SetCalendarState Calendar2.Msg
     | CreateEventTitle String
     | AddEventPreviewToEvents
-    --| CancelEventPreview Int
     | CancelEventPreview Keyboard.RawKey
 
 
 type CalendarMsg
-    --= SelectDate Time.Posix (Float, Float)
-    --| CreateEventPreview Time.Posix (Float, Float)
-    --| ExtendEventPreview Time.Posix  (Float, Float)
-    --| ShowCreateEventDialog Time.Posix (Float, Float)
     = SelectDate Time.Posix Mouse.Event
     | CreateEventPreview Time.Posix Mouse.Event
     | ExtendEventPreview Time.Posix  Mouse.Event
@@ -142,6 +109,8 @@ type CalendarMsg
     | ExtendingEvent String Int
     --| ExtendEvent String Time.Posix
     | ExtendEvent String Int
+    | DropEnd String 
+    | EventMove String Time.Posix  --GUSA
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -158,7 +127,7 @@ pureUpdate msg model_ =
                     Calendar2.update eventConfig timeSlotConfig calendarMsg model_.calendarState
 
                 newModel =
-                    { model | calendarState = updatedCalendar }
+                    { model_ | calendarState = updatedCalendar }
             in
                 case maybeMsg of
                     Nothing ->
@@ -179,11 +148,9 @@ pureUpdate msg model_ =
         CancelEventPreview keyCode ->
             let
                key = Keyboard.anyKeyOriginal  keyCode
-               --case keyCode of
             in
             case key of
                 --27 ->
-                --Just Keyboard.Escape ->
                 Just Keyboard.Alt ->
                     model_
                         |> removeEventPreview
@@ -195,7 +162,12 @@ pureUpdate msg model_ =
 
 updateCalendar : CalendarMsg -> Model -> Model
 updateCalendar msg model_ =
-    case Debug.log "calendarMsg" msg of
+        let _  = Debug.log "calendarMsg:" msg in
+        --case Debug.log "calendarMsg:" msg of
+        case  msg of
+        DropEnd date  ->
+            model_
+
         SelectDate date xy ->
             model_
                 |> createEventPreview date xy 60
@@ -222,10 +194,80 @@ updateCalendar msg model_ =
             --{ model_ | eventExtendAmount = timeDiff }
             { model_ | eventExtendAmount = (Time.millisToPosix timeDiff) }
 
+
+        EventMove eventId posix ->  --GUSA
+            let
+                _ = Debug.log "***move event: "  eventId  
+                _ = Debug.log "drop day: "  (Time.toDay Time.utc posix) 
+                maybeEvent =
+                    Dict.get eventId model_.events
+                        
+                newEnd old_start old_end =
+                        let
+                              e = Time.posixToMillis old_end
+                              s = Time.posixToMillis old_start
+                              d = (-) e s
+                              n = Time.posixToMillis posix
+                              a = (+) n d 
+                        in
+                        Time.millisToPosix a
+
+                newEvent event =
+                        { event | end = newEnd event.start event.end, start = posix}
+
+                updateEvents event =
+                    Dict.update eventId (Maybe.map (\event_ -> newEvent event_)) model_.events
+
+            in
+                case maybeEvent of
+                    Nothing ->
+                        model_
+
+                    Just event ->
+                        { model_ | events = updateEvents event }
+                        
+
+{--
+        EventMove eventId posix ->  --GUSA
+            let
+                _ = Debug.log "***move event: "  eventId  
+                _ = Debug.log "drop day: "  (Time.toDay Time.utc posix) 
+
+                --old_start_parts = posixToParts event.start
+                --old_end_parts = posixToParts event.end
+                new_month_day_parts = Time.Extra.posixToParts  Time.utc  posix
+
+                maybeEvent =
+                    Dict.get eventId model_.events
+
+                newTime  old_time =
+                        let
+                          old_time_parts = Time.Extra.posixToParts  Time.utc  old_time
+                          new_time_parts = { old_time_parts 
+                                             | year  = new_month_day_parts.year
+                                             , month = new_month_day_parts.month
+                                             , day   = new_month_day_parts.day
+                                           }
+                        in
+                        Time.Extra.partsToPosix Time.utc new_time_parts
+                newEvent event =
+                        { event | end = newTime event.end , start = newTime event.start}
+
+                updateEvents event =
+                    Dict.update eventId (Maybe.map (\event_ -> newEvent event_)) model_.events
+
+            in
+                case maybeEvent of
+                    Nothing ->
+                        model_
+
+                    Just event ->
+                        { model_ | events = updateEvents event }
+                        --}
         ExtendEvent eventId timeDiff ->
             let
                 maybeEvent =
-                    Dict.get eventId model.events
+                    Dict.get eventId model_.events
 
                 newEnd end = 
                     --Date.toTime end
@@ -239,7 +281,7 @@ updateCalendar msg model_ =
                     { event | end = newEnd event.end }
 
                 updateEvents event =
-                    Dict.insert eventId (extendEvent event) model.events
+                    Dict.insert eventId (extendEvent event) model_.events
             in
                 case maybeEvent of
                     Nothing ->
@@ -253,11 +295,12 @@ updateCalendar msg model_ =
 --createEventPreview : Time.Posix -> (Float, Float) -> Int -> Model -> Model
 createEventPreview : Time.Posix -> Mouse.Event -> Int -> Model -> Model
 createEventPreview date xy minutes model_ =
+    let _  = Debug.log "createEventPreview:" date in
     let
         newEvent =
             --Event (newEventId model.curEventId) "" date (Date.Extra.add Date.Extra.Minute minutes date)
             --Event (newEventId model.curEventId) "" date (Time.Extra.add Time.Extra.Minute minutes date)
-            Event (newEventId model.curEventId) "" date (Time.Extra.add Time.Extra.Millisecond minutes Time.utc  date)
+            Event (newEventId model_.curEventId) "" date (Time.Extra.add Time.Extra.Millisecond minutes Time.utc  date)
 
         eventPreview =
             { event = newEvent
@@ -270,12 +313,13 @@ createEventPreview date xy minutes model_ =
 
 selectEvent : String -> Model -> Model
 selectEvent eventId model_ =
-    { model | selectedEvent = Dict.get eventId model_.events }
+    --let _  = Debug.log "selectEvent:" eventId in
+    { model_ | selectedEvent = Dict.get eventId model_.events }
 
 
 showCreateEventDialog : Model -> Model
 showCreateEventDialog model_ =
-    { model | eventPreview = Maybe.map toggleEventPreviewDialog model_.eventPreview }
+    { model_ | eventPreview = Maybe.map toggleEventPreviewDialog model_.eventPreview }
 
 
 toggleEventPreviewDialog : EventPreview -> EventPreview
@@ -299,6 +343,7 @@ changeEventPreviewTitle title model_ =
 --extendEventPreview : Time.Posix -> (Float, Float) -> Model -> Model
 extendEventPreview : Time.Posix -> Mouse.Event -> Model -> Model
 extendEventPreview date xy model_ =
+    let _  = Debug.log "extendEventPreview:" date in
     let
         extend ({ event, position } as eventPreview) =
             { eventPreview | event = { event | end = Debug.log "finalEnd" date } }
@@ -319,7 +364,7 @@ addEventPreviewToEvents model_ =
             }
 
         addToEvents event =
-            Dict.insert event.id (Debug.log "newEvent" (defaultEmptyTitle event)) model.events
+            Dict.insert event.id (Debug.log "newEvent" (defaultEmptyTitle event)) model_.events
     in
         { model_
             | events =
@@ -349,6 +394,7 @@ view model_ =
     let
         events =
             Dict.values model_.events
+        selectedEvent = model_.selectedEvent
     in
         div []
             [ case model_.eventPreview of
@@ -449,6 +495,7 @@ viewConfig =
         , end = .end
         , event =
             \event isSelected ->
+                --let _  = Debug.log "viewConfig/event:" isSelected in
                 Calendar2.eventView
                     { nodeName = "div"
                     , classes =
@@ -472,6 +519,7 @@ eventConfig =
         , onDragStart = \_ -> Nothing
         , onDragging = \eventId timeDiff -> Just <| ExtendingEvent eventId timeDiff
         , onDragEnd = \eventId timeDiff -> Just <| ExtendEvent eventId timeDiff
+        , onEventMove = \eventId posix -> Just <| EventMove eventId posix --GUSA
         }
 
 

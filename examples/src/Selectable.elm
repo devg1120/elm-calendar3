@@ -194,41 +194,48 @@ updateCalendar msg model_ =
             --{ model_ | eventExtendAmount = timeDiff }
             { model_ | eventExtendAmount = (Time.millisToPosix timeDiff) }
 
+
         EventMove eventId posix ->  --GUSA
-        {--
-            Debug.log ("***move event: " ++ eventId)  --GUSA
-            model_
-            --}
             let
+
+                _ = Debug.log "model: "  (Calendar2.getts model_.calendarState)
+                _ = Debug.log "***move event: "  eventId  
+                _ = Debug.log "drop day: "  (Time.toDay Time.utc posix) 
+
+                timeSpan = Calendar2.getts model_.calendarState
                 maybeEvent =
                     Dict.get eventId model_.events
-                    {--
-                newEnd old_start old_end =
-                    Time.posixToMillis old_end
-                        |> (-) Time.posixToMillis old_start
-                        |> (+) Time.posixToMillis posix
-                        |> Time.millisToPosix
-                        --}
+                        
                 newEnd old_start old_end =
                         let
                               e = Time.posixToMillis old_end
                               s = Time.posixToMillis old_start
-                              d = (-) s e
+                              d = (-) e s
                               n = Time.posixToMillis posix
                               a = (+) n d 
                         in
                         Time.millisToPosix a
-                --newEvent event =
-                --        |> { event | end = newEnd event.start event.end }
-                --        |> { event | start = posix }
+
+                new_month_day_parts = Time.Extra.posixToParts  Time.utc  posix
+
+                newTime  old_time =
+                        let
+                          old_time_parts = Time.Extra.posixToParts  Time.utc  old_time
+                          new_time_parts = { old_time_parts 
+                                             | year  = new_month_day_parts.year
+                                             , month = new_month_day_parts.month
+                                             , day   = new_month_day_parts.day
+                                           }
+                        in
+                        Time.Extra.partsToPosix Time.utc new_time_parts
 
                 newEvent event =
-                        { event | end = newEnd event.start event.end, start = posix}
-
+                        if timeSpan == Calendar2.Month then
+                           { event | end = newTime event.end , start = newTime event.start}
+                        else
+                           { event | end = newEnd event.start event.end, start = posix}
 
                 updateEvents event =
-                    --Dict.update eventId (Maybe.map (\name -> newEvent)) model_.events
-                    --Dict.update eventId (newEvent event) model_.events
                     Dict.update eventId (Maybe.map (\event_ -> newEvent event_)) model_.events
 
             in
@@ -238,7 +245,45 @@ updateCalendar msg model_ =
 
                     Just event ->
                         { model_ | events = updateEvents event }
+                        
 
+{--
+        EventMove eventId posix ->  --GUSA
+            let
+                _ = Debug.log "***move event: "  eventId  
+                _ = Debug.log "drop day: "  (Time.toDay Time.utc posix) 
+
+                --old_start_parts = posixToParts event.start
+                --old_end_parts = posixToParts event.end
+                new_month_day_parts = Time.Extra.posixToParts  Time.utc  posix
+
+                maybeEvent =
+                    Dict.get eventId model_.events
+
+                newTime  old_time =
+                        let
+                          old_time_parts = Time.Extra.posixToParts  Time.utc  old_time
+                          new_time_parts = { old_time_parts 
+                                             | year  = new_month_day_parts.year
+                                             , month = new_month_day_parts.month
+                                             , day   = new_month_day_parts.day
+                                           }
+                        in
+                        Time.Extra.partsToPosix Time.utc new_time_parts
+                newEvent event =
+                        { event | end = newTime event.end , start = newTime event.start}
+
+                updateEvents event =
+                    Dict.update eventId (Maybe.map (\event_ -> newEvent event_)) model_.events
+
+            in
+                case maybeEvent of
+                    Nothing ->
+                        model_
+
+                    Just event ->
+                        { model_ | events = updateEvents event }
+                        --}
         ExtendEvent eventId timeDiff ->
             let
                 maybeEvent =

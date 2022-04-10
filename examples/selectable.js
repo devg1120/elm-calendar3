@@ -7223,6 +7223,25 @@ var author$project$Main$timeSlotConfig = author$project$Calendar2$timeSlotConfig
 				return elm$core$Maybe$Nothing;
 			})
 	});
+var author$project$Calendar2$Agenda = {$: 'Agenda'};
+var author$project$Calendar2$Day = {$: 'Day'};
+var author$project$Calendar2$Week = {$: 'Week'};
+var author$project$Calendar2$fromInternalTimespan = function (timeSpan) {
+	switch (timeSpan.$) {
+		case 'Month':
+			return author$project$Calendar2$Month;
+		case 'Week':
+			return author$project$Calendar2$Week;
+		case 'Day':
+			return author$project$Calendar2$Day;
+		default:
+			return author$project$Calendar2$Agenda;
+	}
+};
+var author$project$Calendar2$getts = function (state) {
+	var state_ = state.a;
+	return author$project$Calendar2$fromInternalTimespan(state_.timeSpan);
+};
 var author$project$Main$Event = F4(
 	function (id, title, start, end) {
 		return {end: end, id: id, start: start, title: title};
@@ -7690,6 +7709,18 @@ var elm$core$Dict$update = F3(
 			return A2(elm$core$Dict$remove, targetKey, dictionary);
 		}
 	});
+var justinmimbs$time_extra$Time$Extra$posixToParts = F2(
+	function (zone, posix) {
+		return {
+			day: A2(elm$time$Time$toDay, zone, posix),
+			hour: A2(elm$time$Time$toHour, zone, posix),
+			millisecond: A2(elm$time$Time$toMillis, zone, posix),
+			minute: A2(elm$time$Time$toMinute, zone, posix),
+			month: A2(elm$time$Time$toMonth, zone, posix),
+			second: A2(elm$time$Time$toSecond, zone, posix),
+			year: A2(elm$time$Time$toYear, zone, posix)
+		};
+	});
 var author$project$Main$updateCalendar = F2(
 	function (msg, model_) {
 		var _n0 = A2(elm$core$Debug$log, 'calendarMsg:', msg);
@@ -7728,17 +7759,31 @@ var author$project$Main$updateCalendar = F2(
 			case 'EventMove':
 				var eventId = msg.a;
 				var posix = msg.b;
+				var timeSpan = author$project$Calendar2$getts(model_.calendarState);
+				var new_month_day_parts = A2(justinmimbs$time_extra$Time$Extra$posixToParts, elm$time$Time$utc, posix);
+				var newTime = function (old_time) {
+					var old_time_parts = A2(justinmimbs$time_extra$Time$Extra$posixToParts, elm$time$Time$utc, old_time);
+					var new_time_parts = _Utils_update(
+						old_time_parts,
+						{day: new_month_day_parts.day, month: new_month_day_parts.month, year: new_month_day_parts.year});
+					return A2(justinmimbs$time_extra$Time$Extra$partsToPosix, elm$time$Time$utc, new_time_parts);
+				};
 				var newEnd = F2(
 					function (old_start, old_end) {
 						var s = elm$time$Time$posixToMillis(old_start);
 						var n = elm$time$Time$posixToMillis(posix);
 						var e = elm$time$Time$posixToMillis(old_end);
-						var d = s - e;
+						var d = e - s;
 						var a = n + d;
 						return elm$time$Time$millisToPosix(a);
 					});
 				var newEvent = function (event) {
-					return _Utils_update(
+					return _Utils_eq(timeSpan, author$project$Calendar2$Month) ? _Utils_update(
+						event,
+						{
+							end: newTime(event.end),
+							start: newTime(event.start)
+						}) : _Utils_update(
 						event,
 						{
 							end: A2(newEnd, event.start, event.end),
@@ -7756,6 +7801,15 @@ var author$project$Main$updateCalendar = F2(
 						model_.events);
 				};
 				var maybeEvent = A2(elm$core$Dict$get, eventId, model_.events);
+				var _n2 = A2(
+					elm$core$Debug$log,
+					'model: ',
+					author$project$Calendar2$getts(model_.calendarState));
+				var _n3 = A2(elm$core$Debug$log, '***move event: ', eventId);
+				var _n4 = A2(
+					elm$core$Debug$log,
+					'drop day: ',
+					A2(elm$time$Time$toDay, elm$time$Time$utc, posix));
 				if (maybeEvent.$ === 'Nothing') {
 					return model_;
 				} else {
