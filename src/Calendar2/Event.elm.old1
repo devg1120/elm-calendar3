@@ -268,7 +268,8 @@ eventStyling config event eventRange timeSpan customClasses =
                 Agenda ->
                      []
     in
-    [ classList (( classes, True ) :: customClasses)] ++   styles -- GUSA
+        -- [ classList (( classes, True ) :: customClasses),  styles ]
+        [ classList (( classes, True ) :: customClasses)] ++   styles -- GUSA
 
 {--
 maybeViewMonthEvent : ViewConfig event -> event -> Maybe String -> EventRange -> Maybe (Html Msg)
@@ -497,27 +498,21 @@ eventSegment config event selectedId eventRange timeSpan =
 
         { nodeName, classes, children } =
             config.event event isSelected
-    --in
-        ev = node nodeName
-            ([     
-                    onClick <| EventClick eventId
+    in
+        node nodeName
+            ([ onClick <| EventClick eventId
              , onMouseEnter <| EventMouseEnter eventId
              , onMouseLeave <| EventMouseLeave eventId
+             -- GUSA
+             -- , on "mousedown" <| Json.map (EventDragStart eventId) Mouse.position
+             --, DragDrop.droppable  <| Json.map (EventDragStart eventId) Mouse.position
+             --,DragDrop.draggable DragDropMsg eventId
              ]
              ++ DragDrop.draggable DragDropMsg eventId 
                 ++ eventStyling config event eventRange timeSpan classes
             )
             children
-    in
-    ev
-    {--
-    div [ class "week_event_class"]
-      [
-       div [style "z-index" "100", style "height" "2px",style "width" "100%", style "background-color" "#ff0000", style "cursor" "n-resize"][]
-       ,ev
-       ,div [style "height" "2px",style "width" "100%", style "background-color" "#ff0000", style "cursor" "s-resize"][]
-       ]
-       --}
+
 
 cellWidth : Float
 cellWidth =

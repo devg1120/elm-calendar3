@@ -523,6 +523,45 @@ viewConfig =
                         , ( "elm-calendar--event-content--is-selected", isSelected )
                         ]
                     , children =
+                        [
+                           div [ class "week_event_class"
+                                ,style "height" "100%"
+                               ]
+                             [
+                                 div [ 
+                                      style "align-items" "flex-start"
+                                     ,style "height" "2px",style "width" "100%", style "background-color" "#ff0000", style "cursor" "n-resize"][]
+
+                                ,div [
+                                      style "align-items" "stretch"
+                                     ,style "height" "100%"
+                                        ]
+                                       [ text <| event.title ]
+                                ,div [ 
+                                       style "align-items" "flex-end"
+                                      ,style "height" "2px",style "width" "100%", style "background-color" "#ff0000", style "cursor" "s-resize"][]
+                            ]
+                       ]
+                    }
+        }
+
+viewConfig2 : Calendar2.ViewConfig Event
+viewConfig2 =
+    Calendar2.viewConfig
+        { toId = .id
+        , title = .title
+        , start = .start
+        , end = .end
+        , event =
+            \event isSelected ->
+                --let _  = Debug.log "viewConfig/event:" isSelected in
+                Calendar2.eventView
+                    { nodeName = "div"
+                    , classes =
+                        [ ( "elm-calendar--event-content", True )
+                        , ( "elm-calendar--event-content--is-selected", isSelected )
+                        ]
+                    , children =
                         [ div []
                             [ text <| event.title ]
                         ]

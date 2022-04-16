@@ -6925,6 +6925,7 @@ var author$project$Calendar2$Internal$update = F4(
 						xy));
 			case 'EventClick':
 				var eventId = msg.a;
+				var _n2 = elm$core$Debug$log('Click:' + eventId);
 				return _Utils_Tuple2(
 					_Utils_update(
 						state,
@@ -6945,6 +6946,8 @@ var author$project$Calendar2$Internal$update = F4(
 			case 'EventDragStart':
 				var eventId = msg.a;
 				var xy = msg.b;
+				var _n3 = elm$core$Debug$log(
+					elm$core$Debug$toString(xy));
 				return _Utils_Tuple2(
 					_Utils_update(
 						state,
@@ -6966,9 +6969,9 @@ var author$project$Calendar2$Internal$update = F4(
 						{
 							dragState: A2(
 								elm$core$Maybe$map,
-								function (_n2) {
-									var start = _n2.start;
-									var kind = _n2.kind;
+								function (_n4) {
+									var start = _n4.start;
+									var kind = _n4.kind;
 									return A3(author$project$Calendar2$Internal$Drag, start, me, kind);
 								},
 								state.dragState)
@@ -6990,17 +6993,18 @@ var author$project$Calendar2$Internal$update = F4(
 						A2(author$project$Calendar2$Internal$getTimeDiffForPosition, xy, state)));
 			default:
 				var msg_ = msg.a;
-				var _n3 = A2(norpan$elm_html5_drag_drop$Html5$DragDrop$update, msg_, state.dragDrop);
-				var dragdrop_model_ = _n3.a;
-				var result = _n3.b;
+				var _n5 = A2(elm$core$Debug$log, 'DragDrop msg:', msg_);
+				var _n6 = A2(norpan$elm_html5_drag_drop$Html5$DragDrop$update, msg_, state.dragDrop);
+				var dragdrop_model_ = _n6.a;
+				var result = _n6.b;
 				var dragId = norpan$elm_html5_drag_drop$Html5$DragDrop$getDragId(dragdrop_model_);
 				var dropId = norpan$elm_html5_drag_drop$Html5$DragDrop$getDropId(dragdrop_model_);
 				var r = function () {
 					if (result.$ === 'Just') {
-						var _n5 = result.a;
-						var id = _n5.a;
-						var time = _n5.b;
-						var pos = _n5.c;
+						var _n10 = result.a;
+						var id = _n10.a;
+						var time = _n10.b;
+						var pos = _n10.c;
 						return A4(
 							elm$core$Debug$log,
 							'id=' + (id + (' ' + author$project$Calendar2$Internal$toUtcString(time))),
@@ -7019,6 +7023,8 @@ var author$project$Calendar2$Internal$update = F4(
 							elm$core$Maybe$Nothing);
 					}
 				}();
+				var _n7 = A2(elm$core$Debug$log, 'model:', dragdrop_model_);
+				var _n8 = A2(elm$core$Debug$log, 'result:', result);
 				return r;
 		}
 	});
@@ -10037,7 +10043,7 @@ var author$project$Calendar2$Event$eventSegment = F5(
 		var nodeName = _n0.nodeName;
 		var classes = _n0.classes;
 		var children = _n0.children;
-		return A3(
+		var ev = A3(
 			elm$html$Html$node,
 			nodeName,
 			_Utils_ap(
@@ -10054,6 +10060,7 @@ var author$project$Calendar2$Event$eventSegment = F5(
 					A2(norpan$elm_html5_drag_drop$Html5$DragDrop$draggable, author$project$Calendar2$Msg$DragDropMsg, eventId),
 					A5(author$project$Calendar2$Event$eventStyling, config, event, eventRange, timeSpan, classes))),
 			children);
+		return ev;
 	});
 var author$project$Calendar2$Event$maybeViewDayEvent = F4(
 	function (config, event, selectedId, eventRange) {
@@ -11894,10 +11901,46 @@ var author$project$Main$viewConfig = author$project$Calendar2$viewConfig(
 							[
 								A2(
 								elm$html$Html$div,
-								_List_Nil,
 								_List_fromArray(
 									[
-										elm$html$Html$text(event.title)
+										elm$html$Html$Attributes$class('week_event_class'),
+										A2(elm$html$Html$Attributes$style, 'height', '100%')
+									]),
+								_List_fromArray(
+									[
+										A2(
+										elm$html$Html$div,
+										_List_fromArray(
+											[
+												A2(elm$html$Html$Attributes$style, 'align-items', 'flex-start'),
+												A2(elm$html$Html$Attributes$style, 'height', '2px'),
+												A2(elm$html$Html$Attributes$style, 'width', '100%'),
+												A2(elm$html$Html$Attributes$style, 'background-color', '#ff0000'),
+												A2(elm$html$Html$Attributes$style, 'cursor', 'n-resize')
+											]),
+										_List_Nil),
+										A2(
+										elm$html$Html$div,
+										_List_fromArray(
+											[
+												A2(elm$html$Html$Attributes$style, 'align-items', 'stretch'),
+												A2(elm$html$Html$Attributes$style, 'height', '100%')
+											]),
+										_List_fromArray(
+											[
+												elm$html$Html$text(event.title)
+											])),
+										A2(
+										elm$html$Html$div,
+										_List_fromArray(
+											[
+												A2(elm$html$Html$Attributes$style, 'align-items', 'flex-end'),
+												A2(elm$html$Html$Attributes$style, 'height', '2px'),
+												A2(elm$html$Html$Attributes$style, 'width', '100%'),
+												A2(elm$html$Html$Attributes$style, 'background-color', '#ff0000'),
+												A2(elm$html$Html$Attributes$style, 'cursor', 's-resize')
+											]),
+										_List_Nil)
 									]))
 							]),
 						classes: _List_fromArray(

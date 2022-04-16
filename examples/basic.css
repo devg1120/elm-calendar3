@@ -281,3 +281,10 @@
 }
 
 .elm-calendar--agenda-times {}
+
+.week_event_class {
+  display: flex;
+  flex-direction:column;
+  /*flex-flow: column;
+  justify-content:space-between;*/
+}

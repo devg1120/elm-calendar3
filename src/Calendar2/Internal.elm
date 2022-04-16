@@ -144,6 +144,9 @@ update eventConfig timeSlotConfig msg state =
             )
 
         EventClick eventId ->
+            let
+                _ = Debug.log ("Click:" ++ eventId)
+            in
             ( { state | selected = Just eventId }
             , eventConfig.onClick eventId
             )
@@ -159,6 +162,9 @@ update eventConfig timeSlotConfig msg state =
             )
 
         EventDragStart eventId xy ->
+            let
+                _ = Debug.log (Debug.toString xy)
+            in
             ( { state | dragState = Just { start = xy, current = xy, kind = Event eventId } }
             , eventConfig.onDragStart eventId
             )
@@ -175,7 +181,7 @@ update eventConfig timeSlotConfig msg state =
             --, eventConfig.onDragEnd eventId (Time.millisToPosix (getTimeDiffForPosition xy state))
             )
         DragDropMsg msg_ ->
-            --let _ = Debug.log "msg:" msg_ in
+            let _ = Debug.log "DragDrop msg:" msg_ in
             let
                 ( dragdrop_model_, result ) =
                     DragDrop.update msg_ state.dragDrop
@@ -184,7 +190,8 @@ update eventConfig timeSlotConfig msg state =
                 dropId =
                     DragDrop.getDropId dragdrop_model_
 
-                --_ = Debug.log "result:"  result
+                _ = Debug.log "model:"  dragdrop_model_
+                _ = Debug.log "result:"  result
                 r = case result of
                       Just ( id , time, pos) ->
                                 Debug.log ("id="++id ++ " " ++ (toUtcString time) ) 
