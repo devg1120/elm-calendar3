@@ -132,6 +132,7 @@ viewTimeSlot date =
           --++ DragDrop.droppable DragDropMsg p
           --++ DragDrop.droppable DragDropMsg "AA"
           ++ DragDrop.droppable DragDropMsg date
+          --++ DragDrop.droppable EdgeDragDropMsg date
           )
         []
         

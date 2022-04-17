@@ -523,27 +523,6 @@ viewConfig =
                         , ( "elm-calendar--event-content--is-selected", isSelected )
                         ]
                     , children =
-                                       [ text <| event.title ]
-                    }
-        }
-
-viewConfig3 : Calendar2.ViewConfig Event
-viewConfig3 =
-    Calendar2.viewConfig
-        { toId = .id
-        , title = .title
-        , start = .start
-        , end = .end
-        , event =
-            \event isSelected ->
-                --let _  = Debug.log "viewConfig/event:" isSelected in
-                Calendar2.eventView
-                    { nodeName = "div"
-                    , classes =
-                        [ ( "elm-calendar--event-content", True )
-                        , ( "elm-calendar--event-content--is-selected", isSelected )
-                        ]
-                    , children =
                         [
                            div [ class "week_event_class"
                                 ,style "height" "100%"

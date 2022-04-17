@@ -17,7 +17,10 @@ import Time
 import Time.Extra
 import Date
 import Html.Events.Extra.Mouse as Mouse 
-import Html5.DragDrop as DragDrop
+import Html5.DragDrop as DragDrop exposing(..)
+--import Html5.DragDrop as DragDrop exposing(Msg(..))
+
+--import Html5.DragDrop exposing (Msg(..)) 
 --import Json.Decode exposing (Value)
 
 import Browser.Events
@@ -90,7 +93,8 @@ toUtcString time =
   String.fromInt (Time.toSecond Time.utc time)
   ++ " (UTC)"
 
-update : EventConfig msg -> TimeSlotConfig msg -> Msg -> State -> ( State, Maybe msg )
+update : EventConfig msg -> TimeSlotConfig msg -> Calendar2.Msg.Msg -> State -> ( State, Maybe msg )
+--update : EventConfig msg -> TimeSlotConfig msg -> Msg -> State -> ( State, Maybe msg )
 update eventConfig timeSlotConfig msg state =
     --let _ = Debug.log "msg:" msg in
     -- case Debug.log "msg" msg of
@@ -144,14 +148,17 @@ update eventConfig timeSlotConfig msg state =
             )
 
         EventClick eventId ->
-            let
-                _ = Debug.log ("Click:" ++ eventId)
-            in
+            --let
+               --  _ = Debug.log ("Click:" ++ eventId)
+            --in
             ( { state | selected = Just eventId }
             , eventConfig.onClick eventId
             )
 
         EventMouseEnter eventId ->
+            let
+                 _ = Debug.log ("MouseEnter:" ++ eventId)
+            in
             ( state
             , eventConfig.onMouseEnter eventId
             )
@@ -161,10 +168,15 @@ update eventConfig timeSlotConfig msg state =
             , eventConfig.onMouseLeave eventId
             )
 
+        EventBotomEdgeMouseEnter eventId ->
+            ( state
+            , Nothing
+            )
+
         EventDragStart eventId xy ->
-            let
-                _ = Debug.log (Debug.toString xy)
-            in
+            --let
+                -- _ = Debug.log (Debug.toString xy)
+            --in
             ( { state | dragState = Just { start = xy, current = xy, kind = Event eventId } }
             , eventConfig.onDragStart eventId
             )
@@ -180,8 +192,25 @@ update eventConfig timeSlotConfig msg state =
             , eventConfig.onDragEnd eventId (getTimeDiffForPosition xy state)
             --, eventConfig.onDragEnd eventId (Time.millisToPosix (getTimeDiffForPosition xy state))
             )
+        EdgeDragDropMsg msg_ ->
+            let _ = Debug.log "EdgeDragDrop msg:" msg_ in
+                {--
+            let
+                posix = case msg_ of
+                        DragDrop.Msg b ->
+                                1
+                        _ ->
+                                9
+                                
+            in
+            --}
+            
+                ( state
+                ,Nothing
+                )
+
         DragDropMsg msg_ ->
-            let _ = Debug.log "DragDrop msg:" msg_ in
+            --let _ = Debug.log "DragDrop msg:" msg_ in
             let
                 ( dragdrop_model_, result ) =
                     DragDrop.update msg_ state.dragDrop
@@ -190,12 +219,12 @@ update eventConfig timeSlotConfig msg state =
                 dropId =
                     DragDrop.getDropId dragdrop_model_
 
-                _ = Debug.log "model:"  dragdrop_model_
-                _ = Debug.log "result:"  result
+                --_ = Debug.log "model:"  dragdrop_model_
+                --_ = Debug.log "result:"  result
                 r = case result of
                       Just ( id , time, pos) ->
-                                Debug.log ("id="++id ++ " " ++ (toUtcString time) ) 
-                                Debug.log (Debug.toString pos) 
+                                --Debug.log ("id="++id ++ " " ++ (toUtcString time) ) 
+                                --Debug.log (Debug.toString pos) 
                                 ( { state | dragDrop = dragdrop_model_}
                                     --, Just DropEnd id
                                    -- , Just Msg.OnDrapEnd id
@@ -297,7 +326,7 @@ changeTimeSpan timeSpan state =
     { state | timeSpan = timeSpan }
 
 
-view : ViewConfig event -> List event -> State -> Html Msg
+view : ViewConfig event -> List event -> State -> Html Calendar2.Msg.Msg
 view config events { viewing, timeSpan, selected } =
     let
         calendarView =
@@ -326,7 +355,7 @@ view config events { viewing, timeSpan, selected } =
             ]
 
 
-viewToolbar : Time.Posix -> TimeSpan -> Html Msg
+viewToolbar : Time.Posix -> TimeSpan -> Html Calendar2.Msg.Msg
 viewToolbar viewing timeSpan =
     div [ class "elm-calendar--toolbar" ]
         [ viewPagination
@@ -335,14 +364,14 @@ viewToolbar viewing timeSpan =
         ]
 
 
-viewTitle : Time.Posix -> Html Msg
+viewTitle : Time.Posix -> Html Calendar2.Msg.Msg
 viewTitle viewing =
     div [ class "elm-calendar--month-title" ]
         -- [ h2 [] [ text <| Date.Extra.toFormattedString "MMMM yyyy" viewing ] ]
         [ h2 [] [ text <| Date.format "MMMM yyyy" (Date.fromPosix Time.utc viewing) ] ]
 
 
-viewPagination : Html Msg
+viewPagination : Html Calendar2.Msg.Msg
 viewPagination =
     div [ class "elm-calendar--paginators" ]
         [ button [ class "elm-calendar--button", onClick PageBack ] [ text "back" ]
@@ -350,7 +379,7 @@ viewPagination =
         ]
 
 
-viewTimeSpanSelection : TimeSpan -> Html Msg
+viewTimeSpanSelection : TimeSpan -> Html Calendar2.Msg.Msg
 viewTimeSpanSelection timeSpan =
     div [ class "elm-calendar--time-spans" ]
         [ button [ class "elm-calendar--button", onClick (ChangeTimeSpan Month) ] [ text "Month" ]
@@ -361,7 +390,7 @@ viewTimeSpanSelection timeSpan =
 
 
 -- subscriptions : State -> Sub Msg
-subscriptions : State -> Sub (Mouse.Event ->Msg)
+subscriptions : State -> Sub (Mouse.Event -> Calendar2.Msg.Msg)
 subscriptions state =
     case state.dragState of
         Just dragState ->

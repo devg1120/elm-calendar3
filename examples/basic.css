@@ -239,6 +239,7 @@
 }
 
 .elm-calendar--event {
+ /* padding: 2px 5px;*/
   padding: 2px 5px;
   background-color: #5fb4ca;
   color: white;
@@ -282,9 +283,9 @@
 
 .elm-calendar--agenda-times {}
 
+/*
 .week_event_class {
   display: flex;
   flex-direction:column;
-  /*flex-flow: column;
-  justify-content:space-between;*/
 }
+*/

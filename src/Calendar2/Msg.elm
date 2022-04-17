@@ -35,5 +35,7 @@ type Msg
     --| DragDropMsg (DragDrop.Msg DragId DropId)
     --| DragDropMsg (DragDrop.Msg String String)
     | DragDropMsg (DragDrop.Msg String Time.Posix)
+    | EdgeDragDropMsg (DragDrop.Msg String Time.Posix)
     --| DragDropMsg (DragDrop.Msg DragId  DropId)
+    | EventBotomEdgeMouseEnter String
 

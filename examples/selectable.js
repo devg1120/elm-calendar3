@@ -6650,44 +6650,7 @@ var author$project$Calendar2$Internal$page = F2(
 					});
 		}
 	});
-var author$project$Calendar2$Internal$toDanishMonth = function (month) {
-	switch (month.$) {
-		case 'Jan':
-			return '1';
-		case 'Feb':
-			return '2';
-		case 'Mar':
-			return '3';
-		case 'Apr':
-			return '4';
-		case 'May':
-			return '5';
-		case 'Jun':
-			return '6';
-		case 'Jul':
-			return '7';
-		case 'Aug':
-			return '8';
-		case 'Sep':
-			return '9';
-		case 'Oct':
-			return '10';
-		case 'Nov':
-			return '11';
-		default:
-			return '12';
-	}
-};
-var author$project$Calendar2$Internal$toUtcString = function (time) {
-	return author$project$Calendar2$Internal$toDanishMonth(
-		A2(elm$time$Time$toMonth, elm$time$Time$utc, time)) + ('/' + (elm$core$String$fromInt(
-		A2(elm$time$Time$toDay, elm$time$Time$utc, time)) + (' ' + (elm$core$String$fromInt(
-		A2(elm$time$Time$toHour, elm$time$Time$utc, time)) + (':' + (elm$core$String$fromInt(
-		A2(elm$time$Time$toMinute, elm$time$Time$utc, time)) + (':' + (elm$core$String$fromInt(
-		A2(elm$time$Time$toSecond, elm$time$Time$utc, time)) + ' (UTC)'))))))));
-};
 var elm$core$Debug$log = _Debug_log;
-var elm$core$Debug$toString = _Debug_toString;
 var elm$core$Maybe$map = F2(
 	function (f, maybe) {
 		if (maybe.$ === 'Just') {
@@ -6925,7 +6888,6 @@ var author$project$Calendar2$Internal$update = F4(
 						xy));
 			case 'EventClick':
 				var eventId = msg.a;
-				var _n2 = elm$core$Debug$log('Click:' + eventId);
 				return _Utils_Tuple2(
 					_Utils_update(
 						state,
@@ -6935,6 +6897,7 @@ var author$project$Calendar2$Internal$update = F4(
 					eventConfig.onClick(eventId));
 			case 'EventMouseEnter':
 				var eventId = msg.a;
+				var _n2 = elm$core$Debug$log('MouseEnter:' + eventId);
 				return _Utils_Tuple2(
 					state,
 					eventConfig.onMouseEnter(eventId));
@@ -6943,11 +6906,12 @@ var author$project$Calendar2$Internal$update = F4(
 				return _Utils_Tuple2(
 					state,
 					eventConfig.onMouseLeave(eventId));
+			case 'EventBotomEdgeMouseEnter':
+				var eventId = msg.a;
+				return _Utils_Tuple2(state, elm$core$Maybe$Nothing);
 			case 'EventDragStart':
 				var eventId = msg.a;
 				var xy = msg.b;
-				var _n3 = elm$core$Debug$log(
-					elm$core$Debug$toString(xy));
 				return _Utils_Tuple2(
 					_Utils_update(
 						state,
@@ -6969,9 +6933,9 @@ var author$project$Calendar2$Internal$update = F4(
 						{
 							dragState: A2(
 								elm$core$Maybe$map,
-								function (_n4) {
-									var start = _n4.start;
-									var kind = _n4.kind;
+								function (_n3) {
+									var start = _n3.start;
+									var kind = _n3.kind;
 									return A3(author$project$Calendar2$Internal$Drag, start, me, kind);
 								},
 								state.dragState)
@@ -6991,30 +6955,28 @@ var author$project$Calendar2$Internal$update = F4(
 						eventConfig.onDragEnd,
 						eventId,
 						A2(author$project$Calendar2$Internal$getTimeDiffForPosition, xy, state)));
+			case 'EdgeDragDropMsg':
+				var msg_ = msg.a;
+				var _n4 = A2(elm$core$Debug$log, 'EdgeDragDrop msg:', msg_);
+				return _Utils_Tuple2(state, elm$core$Maybe$Nothing);
 			default:
 				var msg_ = msg.a;
-				var _n5 = A2(elm$core$Debug$log, 'DragDrop msg:', msg_);
-				var _n6 = A2(norpan$elm_html5_drag_drop$Html5$DragDrop$update, msg_, state.dragDrop);
-				var dragdrop_model_ = _n6.a;
-				var result = _n6.b;
+				var _n5 = A2(norpan$elm_html5_drag_drop$Html5$DragDrop$update, msg_, state.dragDrop);
+				var dragdrop_model_ = _n5.a;
+				var result = _n5.b;
 				var dragId = norpan$elm_html5_drag_drop$Html5$DragDrop$getDragId(dragdrop_model_);
 				var dropId = norpan$elm_html5_drag_drop$Html5$DragDrop$getDropId(dragdrop_model_);
 				var r = function () {
 					if (result.$ === 'Just') {
-						var _n10 = result.a;
-						var id = _n10.a;
-						var time = _n10.b;
-						var pos = _n10.c;
-						return A4(
-							elm$core$Debug$log,
-							'id=' + (id + (' ' + author$project$Calendar2$Internal$toUtcString(time))),
-							elm$core$Debug$log,
-							elm$core$Debug$toString(pos),
-							_Utils_Tuple2(
-								_Utils_update(
-									state,
-									{dragDrop: dragdrop_model_}),
-								A2(eventConfig.onEventMove, id, time)));
+						var _n7 = result.a;
+						var id = _n7.a;
+						var time = _n7.b;
+						var pos = _n7.c;
+						return _Utils_Tuple2(
+							_Utils_update(
+								state,
+								{dragDrop: dragdrop_model_}),
+							A2(eventConfig.onEventMove, id, time));
 					} else {
 						return _Utils_Tuple2(
 							_Utils_update(
@@ -7023,8 +6985,6 @@ var author$project$Calendar2$Internal$update = F4(
 							elm$core$Maybe$Nothing);
 					}
 				}();
-				var _n7 = A2(elm$core$Debug$log, 'model:', dragdrop_model_);
-				var _n8 = A2(elm$core$Debug$log, 'result:', result);
 				return r;
 		}
 	});
@@ -9924,49 +9884,37 @@ var author$project$Calendar2$Event$eventStyling = F5(
 var author$project$Calendar2$Msg$DragDropMsg = function (a) {
 	return {$: 'DragDropMsg', a: a};
 };
-var author$project$Calendar2$Msg$EventClick = function (a) {
-	return {$: 'EventClick', a: a};
+var author$project$Calendar2$Msg$EdgeDragDropMsg = function (a) {
+	return {$: 'EdgeDragDropMsg', a: a};
 };
-var author$project$Calendar2$Msg$EventMouseEnter = function (a) {
-	return {$: 'EventMouseEnter', a: a};
-};
-var author$project$Calendar2$Msg$EventMouseLeave = function (a) {
-	return {$: 'EventMouseLeave', a: a};
-};
+var elm$core$Debug$toString = _Debug_toString;
 var elm$virtual_dom$VirtualDom$node = function (tag) {
 	return _VirtualDom_node(
 		_VirtualDom_noScript(tag));
 };
 var elm$html$Html$node = elm$virtual_dom$VirtualDom$node;
-var elm$virtual_dom$VirtualDom$Normal = function (a) {
-	return {$: 'Normal', a: a};
+var elm$core$Basics$truncate = _Basics_truncate;
+var justinmimbs$date$Date$toMonths = function (rd) {
+	var date = justinmimbs$date$Date$toCalendarDate(
+		justinmimbs$date$Date$RD(rd));
+	var wholeMonths = (12 * (date.year - 1)) + (justinmimbs$date$Date$monthToNumber(date.month) - 1);
+	return wholeMonths + (date.day / 100);
 };
-var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
-var elm$html$Html$Events$on = F2(
-	function (event, decoder) {
-		return A2(
-			elm$virtual_dom$VirtualDom$on,
-			event,
-			elm$virtual_dom$VirtualDom$Normal(decoder));
+var justinmimbs$date$Date$diff = F3(
+	function (unit, _n0, _n1) {
+		var rd1 = _n0.a;
+		var rd2 = _n1.a;
+		switch (unit.$) {
+			case 'Years':
+				return (((justinmimbs$date$Date$toMonths(rd2) - justinmimbs$date$Date$toMonths(rd1)) | 0) / 12) | 0;
+			case 'Months':
+				return (justinmimbs$date$Date$toMonths(rd2) - justinmimbs$date$Date$toMonths(rd1)) | 0;
+			case 'Weeks':
+				return ((rd2 - rd1) / 7) | 0;
+			default:
+				return rd2 - rd1;
+		}
 	});
-var elm$html$Html$Events$onClick = function (msg) {
-	return A2(
-		elm$html$Html$Events$on,
-		'click',
-		elm$json$Json$Decode$succeed(msg));
-};
-var elm$html$Html$Events$onMouseEnter = function (msg) {
-	return A2(
-		elm$html$Html$Events$on,
-		'mouseenter',
-		elm$json$Json$Decode$succeed(msg));
-};
-var elm$html$Html$Events$onMouseLeave = function (msg) {
-	return A2(
-		elm$html$Html$Events$on,
-		'mouseleave',
-		elm$json$Json$Decode$succeed(msg));
-};
 var elm$virtual_dom$VirtualDom$attribute = F2(
 	function (key, value) {
 		return A2(
@@ -9984,6 +9932,7 @@ var norpan$elm_html5_drag_drop$Html5$DragDrop$DragStart = F2(
 var elm$virtual_dom$VirtualDom$Custom = function (a) {
 	return {$: 'Custom', a: a};
 };
+var elm$virtual_dom$VirtualDom$on = _VirtualDom_on;
 var elm$html$Html$Events$custom = F2(
 	function (event, decoder) {
 		return A2(
@@ -10031,6 +9980,10 @@ var norpan$elm_html5_drag_drop$Html5$DragDrop$draggable = F2(
 	});
 var author$project$Calendar2$Event$eventSegment = F5(
 	function (config, event, selectedId, eventRange, timeSpan) {
+		var eventStart = A2(
+			justinmimbs$date$Date$fromPosix,
+			elm$time$Time$utc,
+			config.start(event));
 		var eventId = config.toId(event);
 		var isSelected = A2(
 			elm$core$Maybe$withDefault,
@@ -10039,27 +9992,132 @@ var author$project$Calendar2$Event$eventSegment = F5(
 				elm$core$Maybe$map,
 				elm$core$Basics$eq(eventId),
 				selectedId));
+		var eventEnd = A2(
+			justinmimbs$date$Date$fromPosix,
+			elm$time$Time$utc,
+			config.end(event));
+		var diff = A3(justinmimbs$date$Date$diff, justinmimbs$date$Date$Days, eventStart, eventEnd);
 		var _n0 = A2(config.event, event, isSelected);
 		var nodeName = _n0.nodeName;
 		var classes = _n0.classes;
 		var children = _n0.children;
-		var ev = A3(
+		var children2 = _List_fromArray(
+			[
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2(elm$html$Html$Attributes$style, 'display', 'flex'),
+						A2(elm$html$Html$Attributes$style, 'flex-direction', 'column'),
+						A2(elm$html$Html$Attributes$style, 'height', '100%')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								A2(elm$html$Html$Attributes$style, 'align-items', 'flex-start'),
+								A2(elm$html$Html$Attributes$style, 'height', '7px'),
+								A2(elm$html$Html$Attributes$style, 'width', '100%'),
+								A2(elm$html$Html$Attributes$style, 'background-color', '#ff0000'),
+								A2(elm$html$Html$Attributes$style, 'cursor', 'n-resize')
+							]),
+						_List_Nil),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								A2(elm$html$Html$Attributes$style, 'align-items', 'stretch'),
+								A2(elm$html$Html$Attributes$style, 'height', '100%')
+							]),
+						children),
+						A2(
+						elm$html$Html$div,
+						_Utils_ap(
+							_List_fromArray(
+								[
+									A2(elm$html$Html$Attributes$style, 'align-items', 'flex-end'),
+									A2(elm$html$Html$Attributes$style, 'height', '7px'),
+									A2(elm$html$Html$Attributes$style, 'width', '100%'),
+									A2(elm$html$Html$Attributes$style, 'background-color', '#ff0000'),
+									A2(elm$html$Html$Attributes$style, 'padding-bottom', '-2px'),
+									A2(elm$html$Html$Attributes$style, 'cursor', 's-resize')
+								]),
+							A2(norpan$elm_html5_drag_drop$Html5$DragDrop$draggable, author$project$Calendar2$Msg$EdgeDragDropMsg, eventId)),
+						_List_Nil)
+					]))
+			]);
+		var children3 = _List_fromArray(
+			[
+				A2(
+				elm$html$Html$div,
+				_List_fromArray(
+					[
+						A2(elm$html$Html$Attributes$style, 'display', 'flex'),
+						A2(elm$html$Html$Attributes$style, 'flex-direction', 'row'),
+						A2(elm$html$Html$Attributes$style, 'height', '100%')
+					]),
+				_List_fromArray(
+					[
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								A2(elm$html$Html$Attributes$style, 'justify-content', 'flex-start'),
+								A2(elm$html$Html$Attributes$style, 'width', '7px'),
+								A2(elm$html$Html$Attributes$style, 'background-color', '#ff0000'),
+								A2(elm$html$Html$Attributes$style, 'cursor', 'w-resize')
+							]),
+						_List_Nil),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								A2(elm$html$Html$Attributes$style, 'justify-content', 'center'),
+								A2(elm$html$Html$Attributes$style, 'height', '100%'),
+								A2(elm$html$Html$Attributes$style, 'width', '100%')
+							]),
+						children),
+						A2(
+						elm$html$Html$div,
+						_List_fromArray(
+							[
+								A2(elm$html$Html$Attributes$style, 'justify-content', 'flex-end'),
+								A2(elm$html$Html$Attributes$style, 'width', '7px'),
+								A2(elm$html$Html$Attributes$style, 'background-color', '#ff0000'),
+								A2(elm$html$Html$Attributes$style, 'cursor', 'e-resize')
+							]),
+						_List_Nil)
+					]))
+			]);
+		var ev2 = A3(
+			elm$html$Html$node,
+			nodeName,
+			_Utils_ap(
+				_List_Nil,
+				_Utils_ap(
+					A2(norpan$elm_html5_drag_drop$Html5$DragDrop$draggable, author$project$Calendar2$Msg$DragDropMsg, eventId),
+					A5(author$project$Calendar2$Event$eventStyling, config, event, eventRange, timeSpan, classes))),
+			children2);
+		var ev3 = A3(
 			elm$html$Html$node,
 			nodeName,
 			_Utils_ap(
 				_List_fromArray(
 					[
-						elm$html$Html$Events$onClick(
-						author$project$Calendar2$Msg$EventClick(eventId)),
-						elm$html$Html$Events$onMouseEnter(
-						author$project$Calendar2$Msg$EventMouseEnter(eventId)),
-						elm$html$Html$Events$onMouseLeave(
-						author$project$Calendar2$Msg$EventMouseLeave(eventId))
+						A2(elm$html$Html$Attributes$style, 'padding-left', '0px'),
+						A2(elm$html$Html$Attributes$style, 'padding-right', '0px')
 					]),
 				_Utils_ap(
 					A2(norpan$elm_html5_drag_drop$Html5$DragDrop$draggable, author$project$Calendar2$Msg$DragDropMsg, eventId),
 					A5(author$project$Calendar2$Event$eventStyling, config, event, eventRange, timeSpan, classes))),
-			children);
+			children3);
+		var ev = (!diff) ? ev2 : ev3;
+		var _n1 = elm$core$Debug$log(
+			elm$core$Debug$toString(diff));
+		var _n2 = elm$core$Debug$log(
+			elm$core$Debug$toString(classes));
 		return ev;
 	});
 var author$project$Calendar2$Event$maybeViewDayEvent = F4(
@@ -10860,6 +10918,22 @@ var author$project$Calendar2$Day$view = F4(
 var author$project$Calendar2$Msg$PageBack = {$: 'PageBack'};
 var author$project$Calendar2$Msg$PageForward = {$: 'PageForward'};
 var elm$html$Html$button = _VirtualDom_node('button');
+var elm$virtual_dom$VirtualDom$Normal = function (a) {
+	return {$: 'Normal', a: a};
+};
+var elm$html$Html$Events$on = F2(
+	function (event, decoder) {
+		return A2(
+			elm$virtual_dom$VirtualDom$on,
+			event,
+			elm$virtual_dom$VirtualDom$Normal(decoder));
+	});
+var elm$html$Html$Events$onClick = function (msg) {
+	return A2(
+		elm$html$Html$Events$on,
+		'click',
+		elm$json$Json$Decode$succeed(msg));
+};
 var author$project$Calendar2$Internal$viewPagination = A2(
 	elm$html$Html$div,
 	_List_fromArray(
@@ -11116,6 +11190,9 @@ var author$project$Calendar2$Month$eventStyling = F4(
 					customClasses))
 			]);
 	});
+var author$project$Calendar2$Msg$EventClick = function (a) {
+	return {$: 'EventClick', a: a};
+};
 var author$project$Calendar2$Month$eventSegment = F4(
 	function (config, event, selectedId, eventRange) {
 		var eventId = config.toId(event);
@@ -11196,28 +11273,6 @@ var author$project$Calendar2$Event$rowSegment = F2(
 			elm$html$Html$div,
 			author$project$Calendar2$Event$styleRowSegment(widthPercentage),
 			children);
-	});
-var elm$core$Basics$truncate = _Basics_truncate;
-var justinmimbs$date$Date$toMonths = function (rd) {
-	var date = justinmimbs$date$Date$toCalendarDate(
-		justinmimbs$date$Date$RD(rd));
-	var wholeMonths = (12 * (date.year - 1)) + (justinmimbs$date$Date$monthToNumber(date.month) - 1);
-	return wholeMonths + (date.day / 100);
-};
-var justinmimbs$date$Date$diff = F3(
-	function (unit, _n0, _n1) {
-		var rd1 = _n0.a;
-		var rd2 = _n1.a;
-		switch (unit.$) {
-			case 'Years':
-				return (((justinmimbs$date$Date$toMonths(rd2) - justinmimbs$date$Date$toMonths(rd1)) | 0) / 12) | 0;
-			case 'Months':
-				return (justinmimbs$date$Date$toMonths(rd2) - justinmimbs$date$Date$toMonths(rd1)) | 0;
-			case 'Weeks':
-				return ((rd2 - rd1) / 7) | 0;
-			default:
-				return rd2 - rd1;
-		}
 	});
 var author$project$Calendar2$Event$viewMonthEvent = F4(
 	function (config, event, selectedId, eventRange) {
@@ -11899,49 +11954,7 @@ var author$project$Main$viewConfig = author$project$Calendar2$viewConfig(
 					{
 						children: _List_fromArray(
 							[
-								A2(
-								elm$html$Html$div,
-								_List_fromArray(
-									[
-										elm$html$Html$Attributes$class('week_event_class'),
-										A2(elm$html$Html$Attributes$style, 'height', '100%')
-									]),
-								_List_fromArray(
-									[
-										A2(
-										elm$html$Html$div,
-										_List_fromArray(
-											[
-												A2(elm$html$Html$Attributes$style, 'align-items', 'flex-start'),
-												A2(elm$html$Html$Attributes$style, 'height', '2px'),
-												A2(elm$html$Html$Attributes$style, 'width', '100%'),
-												A2(elm$html$Html$Attributes$style, 'background-color', '#ff0000'),
-												A2(elm$html$Html$Attributes$style, 'cursor', 'n-resize')
-											]),
-										_List_Nil),
-										A2(
-										elm$html$Html$div,
-										_List_fromArray(
-											[
-												A2(elm$html$Html$Attributes$style, 'align-items', 'stretch'),
-												A2(elm$html$Html$Attributes$style, 'height', '100%')
-											]),
-										_List_fromArray(
-											[
-												elm$html$Html$text(event.title)
-											])),
-										A2(
-										elm$html$Html$div,
-										_List_fromArray(
-											[
-												A2(elm$html$Html$Attributes$style, 'align-items', 'flex-end'),
-												A2(elm$html$Html$Attributes$style, 'height', '2px'),
-												A2(elm$html$Html$Attributes$style, 'width', '100%'),
-												A2(elm$html$Html$Attributes$style, 'background-color', '#ff0000'),
-												A2(elm$html$Html$Attributes$style, 'cursor', 's-resize')
-											]),
-										_List_Nil)
-									]))
+								elm$html$Html$text(event.title)
 							]),
 						classes: _List_fromArray(
 							[

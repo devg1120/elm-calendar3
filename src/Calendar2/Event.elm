@@ -491,23 +491,142 @@ eventSegment config event selectedId eventRange timeSpan =
         eventId =
             config.toId event
 
+        eventStart =
+            Date.fromPosix Time.utc (config.start event)
+            --config.start event
+
+        eventEnd =
+            Date.fromPosix Time.utc (config.end event)
+
+        diff = Date.diff Date.Days eventStart eventEnd
+
+        _ = Debug.log (Debug.toString diff) 
+ 
         isSelected =
             Maybe.map ((==) eventId) selectedId
                 |> Maybe.withDefault False
 
         { nodeName, classes, children } =
             config.event event isSelected
+
+        _ = Debug.log (Debug.toString classes)
     --in
-        ev = node nodeName
+
+        -- week day 1day event
+        children2 =
+                   [
+                    div [ 
+                          style "display" "flex"
+                         ,style "flex-direction" "column"
+                         ,style "height" "100%"
+                         --,style "padding-bottom" "0px"
+                         --,style "margin-bottom" "0px"
+                         ]
+                         [
+                          div [ 
+                               style "align-items" "flex-start"
+                               ,style "height" "7px"
+                               ,style "width" "100%"
+                               ,style "background-color" "#ff0000"
+                               ,style "cursor" "n-resize"][]
+
+                          ,div [
+                                style "align-items" "stretch"
+                                ,style "height" "100%"
+                               ]
+                                     --   [ text <| event.title ]
+                               children
+                          ,div ([ 
+                                style "align-items" "flex-end"
+                               ,style "height" "7px"
+                               ,style "width" "100%"
+                               ,style "background-color" "#ff0000"
+                               ,style "padding-bottom" "-2px"
+                               ,style "cursor" "s-resize"
+                               --,onMouseEnter <| EventMouseEnter eventId
+                               --,onMouseEnter <| EventBotomEdgeMouseEnter eventId
+                               --,onMouseLeave <| EventMouseLeave eventId
+                               ]
+                                --++ (DragDrop.draggable DragDropMsg eventId )
+                                ++ (DragDrop.draggable EdgeDragDropMsg  eventId )
+                                )
+                               []
+                               --++ DragDrop.draggable DragDropMsg eventId 
+                       ]
+                   ]
+        ev2 = node nodeName
             ([     
-                    onClick <| EventClick eventId
-             , onMouseEnter <| EventMouseEnter eventId
-             , onMouseLeave <| EventMouseLeave eventId
+             --       onClick <| EventClick eventId
+             --, onMouseEnter <| EventMouseEnter eventId
+             --, onMouseLeave <| EventMouseLeave eventId
+             --,style "height" "100%"
+             --,style "padding-top" "0px"
+             --,style "padding-bottom" "0px"
              ]
              ++ DragDrop.draggable DragDropMsg eventId 
                 ++ eventStyling config event eventRange timeSpan classes
             )
-            children
+            children2
+
+        -- month week day allday event
+        children3 =
+                   [
+                    div [ 
+                          style "display" "flex"
+                         ,style "flex-direction" "row"
+                         --,style "wight" "100%"
+                         ,style "height" "100%"
+                         ]
+                         [
+                          div [ 
+                               --style "align-items" "flex-start"
+                               style "justify-content" "flex-start"
+                               --,style "height" "2px",style "width" "100%"
+                               ,style "width" "7px"
+                               --,style "height" "100%"
+                               ,style "background-color" "#ff0000"
+                               --,style "padding" "0px"
+                               --,style "margin" "0px"
+                               ,style "cursor" "w-resize"][]
+
+                          ,div [
+                               -- style "align-items" "stretch"
+                               style "justify-content" "center"
+                                ,style "height" "100%"
+                                ,style "width" "100%"
+                               ]
+                                     --   [ text <| event.title ]
+                               children
+                          ,div [ 
+                               -- style "align-items" "flex-end"
+                               style "justify-content" "flex-end"
+                               --,style "height" "2px",style "width" "100%"
+                               ,style "width" "7px"
+                               --,style "height" "100%"
+                               ,style "background-color" "#ff0000"
+                               ,style "cursor" "e-resize"][]
+                       ]
+                   ]
+
+        ev3 = node nodeName
+            ([     
+             --       onClick <| EventClick eventId
+             --, onMouseEnter <| EventMouseEnter eventId
+             --, onMouseLeave <| EventMouseLeave eventId
+              style "padding-left" "0px"
+             ,style "padding-right" "0px"
+             ]
+             ++ DragDrop.draggable DragDropMsg eventId 
+                ++ eventStyling config event eventRange timeSpan classes
+            )
+            children3
+
+        ev = if diff == 0 then
+                ev2
+             else
+                ev3
+
+
     in
     ev
     {--
